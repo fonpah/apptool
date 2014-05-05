@@ -1,4 +1,4 @@
-Plate
+Application Tool
 =====
 
-A workbench for Problem-based Learning Authoring and Transformation Environment (PLATE)
+A workbench for Problem-based Learning Activity Whiteboard
