@@ -1,4 +1,4 @@
 Application Tool
 =====
 
-A workbench for Problem-based Learning Activity Whiteboard
+A Problem-based Learning Activity Whiteboard
