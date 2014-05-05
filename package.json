@@ -25,6 +25,7 @@
     "uglify-js": "~2.4.3",
     "css": "~1.4.4",
     "cron": "~1.0.1",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "http-auth": "^2.1.7"
   }
 }

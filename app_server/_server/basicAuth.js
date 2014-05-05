@@ -7,9 +7,7 @@ exports.setBasicAuthConfig = function( app ){
         realm: "whiteboard app",
         file: __dirname + "/../data/users.htpasswd" // gevorg:gpass, Sarah:testpass ...
     });
-    if(appConfig.getRunMode() == 'dev'){
-        app.use(auth.connect(basic));
-    }
+    app.use(auth.connect(basic));
 
 
     return app;

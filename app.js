@@ -21,7 +21,7 @@ async.series([
         });
     },
     function(callback){
-
+        app = require('./app_server/_server/basicAuth.js').setBasicAuthConfig( app );
         console.log('   . Initailising custom middlewares');
         callback();
     },
