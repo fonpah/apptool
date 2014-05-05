@@ -1,0 +1,157 @@
+/* 
+    Document   : icons
+    Created on : May 24, 2013, 11:14:01 AM
+    Author     : Disi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.icon_settings {
+    background-image:
+        url(../../extjs/shared/icons/fam/folder_wrench.png);
+}
+
+.icon_nav {
+    background-image: url(../../extjs/shared/icons/fam/folder_go.png);
+}
+
+.icon_info {
+    background-image:
+        url(../../extjs/shared/icons/fam/information.png);
+}
+
+.icon_user {
+    background-image:
+        url(../../extjs/shared/icons/fam/user.png);
+}
+
+.icon_user_2 {
+    background-image:
+        url(../../img/icon/black_white/16px/user.png);
+}
+
+.icon_exit {
+    background-image:
+        url(../../img/icon/colorful/exit.png);
+}
+
+.icon_redo {
+    background-image:
+        url(../../img/icon/black_white/16px/redo.png);
+}
+.icon_undo {
+    background-image:
+        url(../../img/icon/black_white/16px/undo.png);
+}
+
+.icon_remove {
+    background-image:
+        url(../../img/icon/black_white/16px/remove2.png);
+}
+
+.icon_file2 {
+    background-image:
+        url(../../img/icon/black_white/16px/file2.png);
+}
+.icon_stack {
+    background-image:
+        url(../../img/icon/black_white/16px/stack.png);
+}
+.icon_stack_w {
+    background-image:
+        url(../../img/icon/black_white/16px/stack_w.png);
+}
+.quill{
+    background-image:
+        url(../../img/icon/black_white/16px/quill.png);
+}
+.icon_users{
+    background-image:
+        url(../../img/icon/black_white/16px/users.png);
+}
+.icon_user-14-icon-16{
+    background-image:
+        url(../../img/icon/black_white/16px/iconmonstr-user-14-icon-16.png);
+}
+
+.youtube{
+    background-image:
+        url(../../img/icon/black_white/16px/youtube.png);
+}
+.icon_file3 {
+    background-image:
+        url(../../img/icon/black_white/16px/file3.png);
+}
+.icon_list2 {
+    background-image:
+        url(../../img/icon/black_white/16px/list2.png);
+}
+.icon_cog2 {
+    background-image:
+        url(../../img/icon/black_white/16px/cog2.png);
+}
+.icon_cogs {
+    background-image:
+        url(../../img/icon/black_white/16px/cogs.png);
+}
+.icon_cogs_w {
+    background-image:
+        url(../../img/icon/black_white/16px/cogs_w.png);
+}
+
+.icon_lab {
+    background-image:
+        url(../../img/icon/black_white/16px/lab.png);
+}
+.icon_lab_w {
+    background-image:
+        url(../../img/icon/black_white/16px/lab_w.png);
+}
+
+.icon_zoom_in {
+    background-image:
+        url(../../img/icon/black_white/16px/zoom-in.png);
+}
+.icon_zoom_out {
+    background-image:
+        url(../../img/icon/black_white/16px/zoom-out.png);
+}
+.icon_arrow_left {
+    background-image:
+    url(../../img/icon/black_white/16px/arrow-left.png);
+}
+.icon_arrow_right {
+    background-image:
+    url(../../img/icon/black_white/16px/arrow-right.png);
+}
+.icon_remove_c {
+    background-image:
+        url(../../img/icon/colorful/remove.png);
+}
+.icon_ok_c {
+    background-image:
+        url(../../img/icon/colorful/accept.png);
+}
+.icon_toSave_c {
+    background-image:
+        url(../../img/icon/colorful/saving.gif);
+}
+.icon_saved_c {
+    background-image:
+        url(../../img/icon/colorful/saved.png);
+}
+.icon_error_c {
+    background-image:
+        url(../../img/icon/colorful/error.png);
+}
+.icon_add_c {
+    background-image:
+        url(../../img/icon/colorful/add.png);
+}
+
+
+.x_icon_connect_c {
+    padding-left: 25px !important;
+    background: transparent url(../../img/icon/colorful/connect.png) no-repeat 3px 0;
+}
+

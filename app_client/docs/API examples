@@ -1,0 +1,30 @@
+http://localhost:3000/api/repository/get/repository/metaTree?&apiPassword=123456&authorId=51e5039e4c3676a81c000001
+http://localhost:3000/api/domain/get/domain?id=97f69eb9-0d95-40f7-a937-9edbd68dd190&apiPassword=123456&authorId=51e5039e4c3676a81c000001
+http://localhost:3000/api/domain/get/domain?id=8e21d4bf-756d-4887-ab57-d8f11d143072&apiPassword=123456&authorId=51e5039e4c3676a81c000001
+
+http://localhost:3000/api/model/get/metaMetaModelErMap?id=activity
+http://localhost:3000/api/model/get/domain/metaEntitiesIoMetaEntity?io=input&entityType=resource&domainId=8e21d4bf-756d-4887-ab57-d8f11d143072&ioToEntityType=activity&ioToEntityId=27mghrt2-lb6tg&apiPassword=123456&authorId=51e5039e4c3676a81c000001
+
+
+
+http://plate.qu.edu.qa/api/repository/tree/get/user/metaModel/nodes?node=tNode_metaModel/pbl/96009040-b321-4211-9930-42471d098d93&apiPassword=123456&authorId=524bfa1e391d553c37000001
+
+
+to get tree list root:
+http://plate.qu.edu.qa/api/repository/get/repository/courseTree?node=root&apiPassword=123456&authorId=52af18e81f3725053d0012fb
+
+to get coursePlan
+http://plate.qu.edu.qa/api/domain/get/domain?domainId=9da38739-375c-4d80-9d2e-dfbc87b9a455&modelLevel=coursePlan&apiPassword=123456&authorId=52af18e81f3725053d0012fb
+
+
+For metamodel
+----------------------
+Get all script root
+http://plate.qu.edu.qa/api/repository/tree/get/user/metaModel/nodes?node=tNode_metaModel/pbl/96009040-b321-4211-9930-42471d098d93&apiPassword=123456&authorId=524bfa1e391d553c37000001
+
+Get all phases
+http://plate.qu.edu.qa/api/repository/tree/get/user/metaModel/nodes?node=tNode_metaModel/pbl/96009040-b321-4211-9930-42471d098d93/metaPhase&apiPassword=123456&authorId=524bfa1e391d553c37000001
+
+Get all elements in certain phase
+http://plate.qu.edu.qa/api/domain/get/domain?domainId=4eeaadfd-11b2-45da-88ec-a6a01c83cf3f&modelLevel=metaModel&apiPassword=123456&authorId=524bfa1e391d553c37000001
+P.S.: "domainId=4eeaadfd-11b2-45da-88ec-a6a01c83cf3f" can be found from the result of "get all phases" API

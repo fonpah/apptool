@@ -1,0 +1,14 @@
+//
+   Created by NONGHO on 05.11.13.
+
+extends ../layout/main
+block content
+    div(class="page-header")
+        h1=title
+    div(class="alert alert-success")
+        =msg
+        p
+            - var anchorText = url && url.anchorText ? url.anchorText:'Back to Login'
+            - var href = url && url.href ?url.href:'/'
+            a(href=href, class="alert-link")
+                =anchorText

@@ -1,0 +1,94 @@
+{ "_id": ObjectId("52132d09fab7383009000030"), "type" : "App.draw.metaElem.Phase", "id" : "27hiiphp-4umdg", "x" : 868, "y" :
+201, "width" : 50, "height" : 50, "title" : "Aim", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType" : "ph
+ase", "domainId" : "6a538522-5778-4479-a052-76beeba218f6", "authorId" : "51e5039e4c3676a81c000001", "userData" : { "processSt
+ructure" : "Sequence" } }
+{ "_id" : ObjectId("52133435fab738300900006b"), "type" : "App.draw.metaElem.Phase", "id" : "27htfuqr-lim3o", "x" : 839, "y" :
+138, "width" : 50, "height" : 50, "title" : "Knowledge identification", "isGhost" : false, "pointTo" : null, "model" : "meta
+", "entityType" : "phase", "domainId" : "3d472321-94c3-4b99-a26f-165c50e45390", "authorId" : "51e5039e4c3676a81c000001", "use
+rData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335a5fab7383009000074"), "type" : "App.draw.metaElem.Phase", "id" : "27mfvhtn-2he3", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Investigation", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityTy
+pe" : "phase", "domainId" : "5b29095a-d287-4d8e-996b-d3cae7f93115", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335affab7383009000076"), "type" : "App.draw.metaElem.Phase", "id" : "27mfvrdl-2suf8", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Information sharing", "isGhost" : false, "pointTo" : null, "model" : "meta", "e
+ntityType" : "phase", "domainId" : "cf2badc5-42c1-46d6-bbe7-5e611591c0d2", "userData" : { "processStructure" : "Sequence" } }
+
+{ "_id" : ObjectId("521335c2fab7383009000078"), "type" : "App.draw.metaElem.Phase", "id" : "27mg0drs-q077g", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Experiment", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType
+" : "phase", "domainId" : "1e7c2547-8a1c-425e-a6d1-279f48005be4", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335cbfab738300900007a"), "type" : "App.draw.metaElem.Phase", "id" : "27mg0mid-0ha5g", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Reasoning", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType"
+: "phase", "domainId" : "ddf6ad9e-dde7-4a42-9815-3948dc0d001c", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335d4fab738300900007c"), "type" : "App.draw.metaElem.Phase", "id" : "27mg0vqu-2e798", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Problem resolution", "isGhost" : false, "pointTo" : null, "model" : "meta", "en
+tityType" : "phase", "domainId" : "5fc69407-5423-4cb3-95a4-6d96f4b3e7f4", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335e8fab738300900007e"), "type" : "App.draw.metaElem.Phase", "id" : "27mg1ipf-re26g", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Evaluation", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType
+" : "phase", "domainId" : "e0310444-c2fb-40c6-ac3d-599b540c6ac3", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521335f7fab7383009000082"), "type" : "App.draw.metaElem.Phase", "id" : "27mg21v5-mk4b8", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Report", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType" :
+"phase", "domainId" : "ba84621a-6aef-4410-b0ca-5bd3cd94e316", "userData" : { "processStructure" : "Sequence" } }
+{ "type" : "App.draw.metaElem.Phase", "id" : "27ot3t3r-i7rv8", "x" : 743, "y" : 157, "width" : 50, "height" : 50, "title" : "
+Preparation", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType" : "phase", "domainId" : "504924bb-9f5b-4953
+-b859-02859b63ed75", "userData" : { "processStructure" : "Sequence" }, "authorId" : "51e5039e4c3676a81c000001", "_id" : Objec
+tId("5214730bde59d0101b000021") }
+{ "type" : "App.draw.metaElem.Phase", "id" : "27js59t2-9n2o", "x" : 749, "y" : 182, "width" : 50, "height" : 50, "title" : "P
+roblem engagement", "isGhost" : false, "pointTo" : null, "bindingId" : "955c37a0-08ad-11e3-b4aa-1fea52674f2a", "model" : "met
+a", "entityType" : "phase", "domainId" : "895ca843-97ad-45c7-a545-fca2aec255db", "authorId" : "51e5039e4c3676a81c000001", "us
+erData" : { "processStructure" : "Sequence" }, "_id" : ObjectId("521478f1de59d0101b000045") }
+{ "type" : "App.draw.metaElem.Phase", "id" : "27mfv6fj-ben7o", "x" : 805, "y" : 111, "width" : 50, "height" : 50, "title" : "
+Plan", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType" : "phase", "domainId" : "10eaa8b5-d4c0-4913-a1e6-d
+8a134d2bf90", "userData" : { "processStructure" : "Sequence" }, "authorId" : "51e5039e4c3676a81c000001", "_id" : ObjectId("52
+148bd347db9a402500002f") }
+{ "type" : "App.draw.metaElem.Phase", "id" : "27mfsr81-72hd8", "x" : 844, "y" : 142, "width" : 50, "height" : 50, "title" : "
+Problem definition", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType" : "phase", "domainId" : "8e21d4bf-75
+6d-4887-ab57-d8f11d143072", "authorId" : "51e5039e4c3676a81c000001", "userData" : { "processStructure" : "Sequence" }, "_id"
+: ObjectId("5214c5c747db9a402500006a") }
+{ "type" : "App.draw.metaElem.PhaseSubPhase", "id" : "27ouvevl-d1fno", "x" : 727, "y" : 293, "width" : 50, "height" : 50, "ti
+tle" : "Plan", "isGhost" : true, "pointTo" : "10eaa8b5-d4c0-4913-a1e6-d8a134d2bf90", "model" : "meta", "entityType" : "phase"
+, "domainId" : "8e21d4bf-756d-4887-ab57-d8f11d143072", "authorId" : "51e5039e4c3676a81c000001", "userData" : { }, "_id" : Obj
+ectId("5214c5c747db9a4025000069") }
+{ "type" : "App.draw.metaElem.ModelStartPhase", "id" : "27mdfone-8to58", "x" : 212, "y" : 88, "width" : 50, "height" : 50, "t
+itle" : "Preparation", "isGhost" : true, "pointTo" : "504924bb-9f5b-4953-b859-02859b63ed75", "model" : "meta", "entityType" :
+"phase", "domainId" : "97f69eb9-0d95-40f7-a937-9edbd68dd190", "authorId" : "51e5039e4c3676a81c000001", "userData" : { }, "_i
+d" : ObjectId("5214c60e47db9a40250000a4") }
+{ "type" : "App.draw.metaElem.ModelMiddlePhase", "id" : "27pehc07-26n38", "x" : 506, "y" : 219, "width" : 50, "height" : 50,
+"title" : "Aim", "isGhost" : true, "pointTo" : "6a538522-5778-4479-a052-76beeba218f6", "model" : "meta", "entityType" : "phas
+e", "domainId" : "97f69eb9-0d95-40f7-a937-9edbd68dd190", "userData" : { }, "authorId" : "51e5039e4c3676a81c000001", "_id" : O
+bjectId("5214c60e47db9a40250000a7") }
+{ "type" : "App.draw.metaElem.ModelMiddlePhase", "id" : "27mgf0a6-g9nfo", "x" : 650, "y" : 88, "width" : 50, "height" : 50, "
+title" : "Aim", "isGhost" : true, "pointTo" : "6a538522-5778-4479-a052-76beeba218f6", "model" : "meta", "entityType" : "phase
+", "domainId" : "97f69eb9-0d95-40f7-a937-9edbd68dd190", "authorId" : "51e5039e4c3676a81c000001", "userData" : { }, "_id" : Ob
+jectId("5214c60e47db9a40250000a5") }
+{ "type" : "App.draw.metaElem.PhaseSubPhase", "id" : "27ju99ce-1htj8", "x" : 298, "y" : 50, "width" : 50, "height" : 50, "tit
+le" : "Knowledge identification", "isGhost" : true, "pointTo" : "3d472321-94c3-4b99-a26f-165c50e45390", "bindingId" : "c53061
+90-08b2-11e3-8aa0-6da026347143", "model" : "meta", "entityType" : "phase", "domainId" : "3d472321-94c3-4b99-a26f-165c50e45390
+", "authorId" : "51e5039e4c3676a81c000001", "userData" : { }, "_id" : ObjectId("52133435fab738300900006d") }
+{ "type" : "App.draw.metaElem.PhaseSubPhase", "id" : "27ju9gs1-a45lg", "x" : 209, "y" : 354, "width" : 50, "height" : 50, "ti
+tle" : "Knowledge identification", "isGhost" : true, "pointTo" : "3d472321-94c3-4b99-a26f-165c50e45390", "bindingId" : "c9bbb
+610-08b2-11e3-8aa0-6da026347143", "model" : "meta", "entityType" : "phase", "domainId" : "3d472321-94c3-4b99-a26f-165c50e4539
+0", "authorId" : "51e5039e4c3676a81c000001", "userData" : { }, "_id" : ObjectId("52133435fab738300900006c") }
+{ "_id" : ObjectId("521335f1fab7383009000080"), "type" : "App.draw.metaElem.Phase", "id" : "27mg1rcq-j3fho", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Reflection", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType
+" : "phase", "domainId" : "ac97bf93-22b9-4bcb-95dc-1dd123de5eed", "userData" : { "processStructure" : "Sequence" } }
+
+{ "_id" : ObjectId("5213360afab7383009000084"), "type" : "App.draw.metaElem.Phase", "id" : "27mg2kco-qqug", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Application", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType
+" : "phase", "domainId" : "195b6dfe-65ee-482f-9ff2-cd44eda1fc52", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521471c5de59d0101b000003"), "type" : "App.draw.metaElem.Phase", "id" : "27ot58hc-8lt58", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Problem analysis", "isGhost" : false, "pointTo" : null, "model" : "meta", "enti
+tyType" : "phase", "domainId" : "0afd3493-3932-4f1a-bbff-9c1ebf307555", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("521471f9de59d0101b000005"), "type" : "App.draw.metaElem.Phase", "id" : "27ot6rjk-98hj8", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Research", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType"
+: "phase", "domainId" : "5834ba0d-d146-4846-ad4c-7ad45620eb2f", "userData" : { "processStructure" : "Sequence" } }
+{ "_id" : ObjectId("52147223de59d0101b000007"), "type" : "App.draw.metaElem.Phase", "id" : "27ot84ok-vt85g", "x" : 100, "y" :
+100, "width" : 50, "height" : 50, "title" : "Reasoning", "isGhost" : false, "pointTo" : null, "model" : "meta", "entityType"
+: "phase", "domainId" : "9501a81b-01b0-42c0-87fe-853ac3620ddb", "userData" : { "processStructure" : "Sequence" } }
+{ "type" : "App.draw.metaElem.ModelMiddlePhase", "id" : "27mgesf6-cuvg8", "x" : 440, "y" : 88, "width" : 50, "height" : 50, "
+title" : "Problem definition", "isGhost" : true, "pointTo" : "8e21d4bf-756d-4887-ab57-d8f11d143072", "model" : "meta", "entit
+yType" : "phase", "domainId" : "97f69eb9-0d95-40f7-a937-9edbd68dd190", "authorId" : "51e5039e4c3676a81c000001", "userData" :
+{ }, "_id" : ObjectId("5214c60e47db9a40250000a3") }
+{ "type" : "App.draw.metaElem.ModelMiddlePhase", "id" : "27pe8kjh-8hd6g", "x" : 847, "y" : 88, "width" : 50, "height" : 50, "
+title" : "Investigation", "isGhost" : true, "pointTo" : "5b29095a-d287-4d8e-996b-d3cae7f93115", "model" : "meta", "entityType
+" : "phase", "domainId" : "97f69eb9-0d95-40f7-a937-9edbd68dd190", "userData" : { }, "authorId" : "51e5039e4c3676a81c000001",
+"_id" : ObjectId("5214c60e47db9a40250000a6") }

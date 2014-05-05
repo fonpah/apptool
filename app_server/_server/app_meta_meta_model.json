@@ -1,0 +1,209 @@
+{
+    "entities": [
+        {
+            "id": "script",
+            "name": "Script",
+            "has": [
+                {
+                    "id": "phase",
+                    "minAmount": 1,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_consist_of"
+                    ]
+                }
+            ],
+            "in": []
+        },
+        {
+            "id": "phase",
+            "name": "Phase",
+            "has": [
+                {
+                    "id": "activity",
+                    "minAmount": 1,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_consist_of"
+                    ]
+                },{
+                    "id": "phase",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_consist_of"
+                    ]
+                },
+                {
+                    "id": "artifact",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "produce"
+                    ]
+                }
+            ],
+            "in": []
+        },
+        {
+            "id": "activity",
+            "name": "Activity",
+            "has": [
+                {
+                    "id": "artifact",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "produce"
+                    ]
+                },{
+                    "id": "tool",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "use"
+                    ]
+                },{
+                    "id": "resource",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "use"
+                    ]
+                },{
+                    "id": "actor",
+                    "minAmount": 1,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_executed_by"
+                    ]
+                }
+
+            ],
+            "in": [
+                {
+                    "id": "phase",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_used_in"
+                    ]
+                },{
+                    "id": "environment",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_carried_out_in"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "artifact",
+            "name": "Artifact",
+            "has": [],
+            "in": [
+                {
+                    "id": "script",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_created_and_used_in"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "environment",
+            "name": "Environment",
+            "has": [
+                {
+                    "id": "tool",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "contain"
+                    ]
+                },
+                {
+                    "id": "resource",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "contain"
+                    ]
+                }
+            ],
+            "in": [
+                {
+                    "id": "script",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_used_in"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "tool",
+            "name": "Tool",
+            "has": [],
+            "in": [
+                {
+                    "id": "script",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_used_in"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "resource",
+            "name": "Resource",
+            "has": [],
+            "in": [
+                {
+                    "id": "script",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_used_in"
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "actor",
+            "name": "Actor",
+            "has": [
+                {
+                    "id": "actor",
+                    "minAmount": 0,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "is_consist_of"
+                    ]
+                },{
+                    "id": "activity",
+                    "minAmount": 1,
+                    "maxAmount": -1,
+                    "relationship": [
+                        "perform"
+                    ]
+                }
+            ],
+            "in": [
+                {
+                "id": "script",
+                "minAmount": 1,
+                "maxAmount": -1,
+                "relationship": [
+                    "is_engaged_of"
+                ]
+            }]
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+
+
+model: {
+    level0: {},
+    level1: {
+        modelLevel: 'metaModel',
+        domain: {
+            type0: 'metaFolder-l100'
+            type1: 'metaPhase'
+        }
+    },
+    level2: {}
+
+}

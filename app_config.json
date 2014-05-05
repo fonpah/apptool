@@ -1,0 +1,20 @@
+{
+    "appName": "PLATE Workbench",
+    "plateSdf": "Problem-based Learning Activity Whiteboard",
+    "runMode": "dev",
+    "database": "whiteboard",
+
+    "emailConfig":{
+        "active":false,
+        "name":"",
+        "user":"",
+        "password":"",
+        "host":"",
+        "port":25,
+        "from":"",
+        "ssl" :false,
+        "tls" :true,
+        "timeout":5000
+
+    }
+}

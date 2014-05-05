@@ -1,0 +1,53 @@
+//
+   Created by fonpah on 02.05.2014.
+
+doctype 5
+html
+    head
+
+        // jQuery libs
+        script(src="/ui/jquery/js/jquery-1.8.1.min.js", type="text/javascript")
+        script(src="/ui/jquery/js/jquery-ui-1.8.23.custom.min.js", type="text/javascript")
+        script(src="/ui/jquery/js/jquery.layout.js", type="text/javascript")
+        script(src="/ui/jquery/js/jquery.autoresize.js", type="text/javascript")
+        script(src="/ui/jquery/js/jquery-touch_punch.js", type="text/javascript")
+        script(src="/ui/jquery/js/jquery.contextmenu.js", type="text/javascript")
+        // End of jQuery libs
+        // Extjs libs
+        //script(type="text/javascript", src="/ui/extjs/shared/include-ext.js")
+        script(type="text/javascript", src="/ui/extjs/ext-all-dev.js")
+        link(rel="stylesheet", type="text/css", href="/ui/extjs/resources/css/ext-all-neptune.css")
+        script(type="text/javascript", src="/ui/extjs/packages/ext-theme-neptune/build/ext-theme-neptune.js")
+        // End of extjs libs
+        // Draw2D libs
+        script(src="/ui/draw2d/js/shifty.js", type="text/javascript")
+        script(src="/ui/draw2d/js/raphael.js", type="text/javascript")
+        script(src="/ui/draw2d/js/rgbcolor.js", type="text/javascript")
+        script(src="/ui/draw2d/js/canvg.js", type="text/javascript")
+        script(src="/ui/draw2d/js/Class.js", type="text/javascript")
+        script(src="/ui/draw2d/js/json2.js", type="text/javascript")
+        script(src="/ui/draw2d/js/pathfinding-browser.min.js", type="text/javascript")
+        script(src="/ui/draw2d/js/draw2d.2.10.1.js", type="text/javascript")
+        script(src="/socket.io/socket.io.js", type="text/javascript")
+        // script(src="resources/ui/draw2d/js/draw2d.js", type="text/javascript")
+        // End of draw2D libs
+        script(src="/ui/whiteboard/component/StatusBar.js", type="text/javascript")
+        script(src="/ui/whiteboard/app.js", type="text/javascript")
+
+        //script(src="/ui/app/class/draw.js", type="text/javascript")
+        //script(src="/ui/app/class/node.js", type="text/javascript")
+        //script(src="/ui/app/class/communication.js", type="text/javascript")
+        // post load
+        link(rel="stylesheet", type="text/css", href="/ui/app/css/icons.css")
+        link(rel="stylesheet", type="text/css", href="/ui/app/css/app.css")
+        link(rel="stylesheet", type="text/css", href="/ui/bootstrap3/css/style.css")
+        link(rel="stylesheet", href="/ui/font-awesome/css/glyph.css")
+    body
+        include partial/workspace
+        include partial/node_pool_panel_el
+        div(id="props-panel", class="x-hide-display",
+        style="width: 200px; height: 200px; overflow: hidden;")
+        div(id="south", class="x-hide-display")
+            p.
+                south - generally for informational stuff, also could be for
+                status bar

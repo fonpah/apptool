@@ -1,0 +1,251 @@
+/* 
+    Document   : app
+    Created on : Jun 3, 2013, 1:20:25 PM
+    Author     : Disi
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/*
+Override ext css, eliminate the tip wide (fixed 40px) bug
+*/
+.x-tip {
+    width: auto !important;
+    max-width: 400px;
+}
+.x-tip-body {
+    width: auto !important;
+    max-width: 400px;
+}
+.x-tip-body span {
+    width: auto !important;
+    max-width: 400px;
+}
+.x-mask {
+    opacity: 0.0;
+}
+
+u.pointer {
+    cursor: pointer;
+}
+
+.x-tab-bar-body-default-top {
+    padding: 2px 2px 3px 2px;
+}
+.x-tab-default-top {
+    padding: 7px 10px 6px 10px;
+}
+.x-tab-bar-default .x-tabbar-scroll-left, .x-tab-bar-default .x-tabbar-scroll-right {
+    height: 29px;
+}
+.x-boundlist {
+    border-color: #3892d3;
+}
+
+
+
+
+/*#toolbar{*/
+    /*background: #cecece; *//* Old browsers */
+    /*background: -moz-linear-gradient(top,  #cecece 0%, #a8a8a8 100%); *//* FF3.6+ */
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#cecece), color-stop(100%,#a8a8a8)); *//* Chrome,Safari4+ */
+    /*background: -webkit-linear-gradient(top,  #cecece 0%,#a8a8a8 100%); *//* Chrome10+,Safari5.1+ */
+    /*background: -o-linear-gradient(top,  #cecece 0%,#a8a8a8 100%); *//* Opera 11.10+ */
+    /*background: -ms-linear-gradient(top,  #cecece 0%,#a8a8a8 100%); *//* IE10+ */
+    /*background: linear-gradient(to bottom,  #cecece 0%,#a8a8a8 100%); *//* W3C */
+    /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cecece', endColorstr='#a8a8a8',GradientType=0 ); *//* IE6-9 */
+
+    /*padding:2px 0 2px 4px;*/
+    /*height: 29px;*/
+    /*border-bottom: 1px solid #515151;*/
+/*}*/
+.node_element_width{
+    width:100px;
+}
+.palette_node_element{
+    /*border:1px solid rgb(209, 209, 209);*/
+    /*background-color: #f3f3f3;*/
+    padding:5px 0 0 0;
+    cursor:move;
+    height: 56px;
+    /*margin: 10px 0;*/
+    /*text-align:center;*/
+    /*align:center;*/
+    /*border-radius: 5px;*/
+    /*display: none;*/
+}
+
+.node_pool{
+    /*width: 100px;*/
+    align:center;
+    margin: 0 auto;
+    
+}
+.node_pool_panel{
+    position:fixed;
+    background: #ffffff;
+    border: solid 1px lightblue;
+    border-top: 0px;
+    border-left: 0;
+    z-index: 1000;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .node_pool_panel
+    {
+        margin-top: 36px;
+    }
+}
+.shadow {
+ -moz-box-shadow: 3px 3px 4px #000;
+ -webkit-box-shadow: 3px 3px 4px #000;
+ box-shadow: 3px 3px 4px #000;
+ /* For IE 8 */
+ -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000')";
+ /* For IE 5.5 - 7 */
+ filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#000000');
+}
+
+.msg .x-box-mc {
+    font-size:14px;
+}
+#msg-div {
+    position:absolute;
+    left:35%;
+    top:5px;
+    width:300px;
+    z-index:20000;
+}
+#msg-div .msg {
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    background: #F6F6F6;
+    border: 2px solid #ccc;
+    margin-top: 2px;
+    padding: 3px 5px;
+    color: #555;
+}
+#msg-div .msg h3 {
+    margin: 0 0 0px;
+    /*font-weight: bold;*/
+    font-size: 14px;
+}
+#msg-div .msg p {
+    margin: 0;
+}
+
+/* StatusBar - structure */
+.x-statusbar .x-status-text {
+    cursor: default;
+    /*
+        height: 21px;
+        line-height: 21px;
+        padding: 0 4px;
+    */
+}
+.x-statusbar .x-status-busy {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+
+.x-toolbar div.xtb-text
+
+.x-statusbar .x-status-text-panel {
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+    padding: 2px 8px 2px 5px;
+}
+
+/* StatusBar word processor example styles */
+
+#word-status .x-status-text-panel .spacer {
+    width: 60px;
+    font-size:0;
+    line-height:0;
+}
+#word-status .x-status-busy {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+#word-status .x-status-saved {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+
+/* StatusBar form validation example styles */
+
+.x-statusbar .x-status-error {
+    cursor: pointer;
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+.x-statusbar .x-status-valid {
+    padding-left: 25px !important;
+    background: transparent no-repeat 3px 0;
+}
+.x-status-error-list {
+    font: 11px tahoma,arial,verdana,sans-serif;
+    position: absolute;
+    z-index: 9999;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+    padding: 5px 10px;
+}
+.x-status-error-list li {
+    cursor: pointer;
+    list-style: disc;
+    margin-left: 10px;
+}
+.x-status-error-list li a {
+    text-decoration: none;
+}
+.x-status-error-list li a:hover {
+    text-decoration: underline;
+}
+
+
+/* *********************************************************** */
+/* *********************************************************** */
+/* *********************************************************** */
+
+
+/* StatusBar - visual */
+
+.x-statusbar .x-status-busy {
+    background-image: url(../../img/icon/colorful/loading.gif);
+}
+.x-statusbar .x-status-text-panel {
+    border-color: #99bbe8 #fff #fff #99bbe8;
+}
+
+/* StatusBar word processor example styles */
+
+#word-status .x-status-text {
+    color: #777;
+}
+#word-status .x-status-busy {
+    background-image: url(../../img/icon/colorful/saving.gif);
+}
+#word-status .x-status-saved {
+    background-image: url(../../img/icon/colorful/saved.png);
+}
+
+/* StatusBar form validation example styles */
+
+.x-statusbar .x-status-error {
+    color: #C33;
+    background-image: url(../../img/icon/colorful/exclamation.gif);
+}
+.x-statusbar .x-status-valid {
+    background-image: url(../../img/icon/colorful/accept.png);
+}
+.x-status-error-list {
+    border-color: #C33;
+    background: white;
+}
+.x-status-error-list li a {
+    color: #15428B;
+}
