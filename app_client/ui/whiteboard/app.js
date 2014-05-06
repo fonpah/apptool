@@ -181,12 +181,7 @@ Ext.define( 'App.Application', {
         if(me.currentCanvas.isDupConnection(sourcePort, targetPort)){
             return false
         }
-        var conn = new draw2d.Connection();
-        //conn.setRouter(this.defaultRouter);
-        conn.setRouter(new draw2d.layout.connection.SplineConnectionRouter());
-        conn.setSourceDecorator(new draw2d.decoration.connection.ArrowDecorator());
-        conn.setStroke(3);
-        conn.setColor('#00A8F0');
+        var conn = new App.node.Connection();
         conn.entityType = 'connection';
         return conn;
     },
@@ -196,7 +191,7 @@ Ext.define( 'App.Application', {
             ajax: this.ajax,
             util: this.util
         } );
-        activity.loadActivity('534e35967492265c0e00000e');
+        activity.loadActivity('5367ffbab77611b15e4a88d1');
     },
     addCmdButtons: function ( btns ) {
         this.commOpBarCmp.add( btns );

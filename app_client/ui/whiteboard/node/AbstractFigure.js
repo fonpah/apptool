@@ -13,6 +13,9 @@ App.node.Connection= draw2d.Connection.extend({
     init:function(){
         this._super();
         this.setSourceDecorator(new draw2d.decoration.connection.ArrowDecorator());
+        this.setRouter(new draw2d.layout.connection.SplineConnectionRouter());
+        this.setStroke(3);
+        this.setColor('#00A8F0');
     }
 });
 Ext.define( 'App.node.AbstractFigure', {
@@ -132,7 +135,8 @@ Ext.define( 'App.node.AbstractFigure', {
 
         var memento = {
             type: this.NAME,
-            x: this.x,
+            id: this.id
+,            x: this.x,
             y: this.y,
             width: this.width,
             height: this.height,

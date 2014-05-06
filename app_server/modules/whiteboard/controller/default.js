@@ -1,25 +1,22 @@
 /**
  * Created by fonpah on 02.05.2014.
  */
+    var db = require('../../../_server/appDatabase' ).db;
+    var activities = db.collection('activities');
+    var mongodb = require('mongodb' );
 var DefaultCtrl = {
     indexAction: function ( req, res, next ) {
         return res.render( 'whiteboard/index' );
     },
     activityAction: function(req, res, next){
-        var activity={
-            _id:'534e35967492265c0e00000e',
-            type:'create',
-            status:1,
-            role:{
-                type:'member',
-                actions:[]
-            },
-            title:'Identify problem',
-            description:'Define the problem',
-            artifacts:[],
-            artifactPool:[]
-        };
-        return res.json({success:true, activity: activity});
+        console.log(req.param('id'));
+       activities.findOne({_id:new mongodb.ObjectID(req.param('id'))},{},function(err, doc){
+           if(err) return res.json({success:false, message:err.message});
+           if(!doc)return res.json({success:false, message:'Activity not found!'});
+
+           return res.json({success:true, activity: doc});
+       });
+
     },
     propertyFormAction: function(req, res, next){
         var form ={
@@ -63,7 +60,11 @@ var DefaultCtrl = {
         return res.json({success:true,form:form});
     },
     saveWorkspaceAction: function(req, res, next){
-        return res.json({success:true,message:'ok', data: req.body});
+        var data = JSON.parse(req.body.workspace);
+        activities.update({_id:new mongodb.ObjectID(req.param('id'))},{$set:{artifacts: data}},{multi:false},function(){
+            return res.json({success:true,message:'ok', data: req.body.workspace});
+        });
+        //return res.json({success:true,message:'ok', data: req.body});
     },
     saveArtifactAction :function(req, res, next){
 
