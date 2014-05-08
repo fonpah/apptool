@@ -2,8 +2,12 @@
  * Created by fonpah on 04.05.2014.
  */
 Ext.define('App.builder.ContentFormBuilder',{
+    isReadOnly: false,
     buildForm: function(config){
         if(!config.figure){
+            return false;
+        }
+        if(this.isReadOnly){
             return false;
         }
         return Ext.widget('window', {
@@ -19,6 +23,7 @@ Ext.define('App.builder.ContentFormBuilder',{
                 listeners:{
                     beforeshow:function(cmp){
                         cmp.setTitle(App.current.util.shortenString(cmp.figure.title,11));
+
                     }
                 }
             ,
@@ -40,10 +45,10 @@ Ext.define('App.builder.ContentFormBuilder',{
                     {
                         xtype: 'htmleditor',
                         name: 'content',
-                        height: 200,
+                        height: 300,
+                        allowBlank:false,
                         listeners:{
                             change:function(cmp){
-                                //console.log(cmp.up('window' ).figure);
                                 cmp.up('window' ).figure.content = cmp.getValue();
                             }
                         }
@@ -52,13 +57,15 @@ Ext.define('App.builder.ContentFormBuilder',{
                 buttons:[
                     {
                         text: 'Save',
-                        handler: function() {
-                            this.up('form').getForm().isValid();
+                        handler: function(cmp) {
+                            if(this.up('form').getForm().isValid()){
+                                App.current.ajax.saveArtifact(cmp.up( 'window' ).figure);
+                            }
                         }
                     },{
                         text: 'Cancel',
                         handler: function() {
-                            this.up('form').getForm().reset();
+                            this.up('window').close();
                         }
                     }
                 ]

@@ -53,6 +53,7 @@ Ext.define('App.draw.Canvas',{
     },
     createFigure: function ( type, title, isInAutoAddSection, x, y ) {
         var figure = Ext.create( type );
+        figure.activityId = this.activity.activityId;
         if ( title ) {
             figure.updateTitle( title, true );
         }

@@ -71,13 +71,13 @@ Ext.define( 'App.node.AbstractFigure', {
         this.title = 'Abstract figure';
         this.description = null;
         this.content = null;
-        // Create any Draw2D figure as decoration for the connection
-        //
+
         this.label = new draw2d.shape.basic.Label( this.title );
         this.label.setStroke( 0 );
         this.label.setFontColor( "#0d0d0d" );
         this.inputLocator = new this.MyInputPortLocator();
         this.outputLocator = new this.MyOutputPortLocator();
+        this.activityId= null;
         // add the new decoration to the connection with a position locator.
         //
         this.addFigure( this.label, new draw2d.layout.locator.BottomLocator( this ) );
@@ -144,7 +144,8 @@ Ext.define( 'App.node.AbstractFigure', {
             entityType: this.entityType,
             userData: this.userData,
             description: this.description,
-            content: this.content
+            content: this.content,
+            activityId : this.activityId
         };
 
 
@@ -179,6 +180,7 @@ Ext.define( 'App.node.AbstractFigure', {
         this.entityType = memento.entityType;
         this.label.setText( this.title );
         this.decsription = memento.description;
+        this.activityId = memento.activityId;
         // width and height are optional parameter for the JSON stuff.
         // We use the defaults if the attributes not present
         if ( typeof memento.width !== "undefined" ) {

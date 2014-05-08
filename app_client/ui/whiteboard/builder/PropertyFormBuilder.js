@@ -2,6 +2,7 @@
  * Created by fonpah on 04.04.2014.
  */
 Ext.define( 'App.builder.PropertyFormBuilder', {
+    isReadOnly: false,
     constructor: function ( config ) {
     },
     buildForm: function ( config ) {
@@ -32,7 +33,9 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
                 var listeners = this.buildPropertyFormItemListener( fields[i]['listeners'] );
                 fields[i]['listeners'] = listeners;
             }
-
+            if(this.isReadOnly){
+                fields[i]['disabled']= true;
+            }
         }
         return fields;
     },
@@ -43,6 +46,9 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
             }
             if ( buttons[i]['handler'] == 'reset' ) {
                 buttons[i]['handler'] = this.onReset
+            }
+            if(this.isReadOnly){
+                buttons[i]['disabled']= true;
             }
         }
         return buttons;
@@ -63,14 +69,14 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
     /** Events**************************/
     onSave: function ( cmp ) {
         if ( cmp.up( 'form' ).getForm().isValid() ) {
-            Ext.MessageBox.alert( 'Thank you!', 'Still working on form submit' );
+            //App.current.ajax.saveArtifact(cmp.up( 'form' ).figure);
         }
         else {
             App.current.util.showErrorMsg( 'validation failed' );
         }
     },
     onReset: function ( cmp ) {
-        cmp.up( 'form' ).getForm().reset();
+        App.current.eastPanelCmp.collapse();
     },
     onChangeTitle: function ( cmp ) {
         var title = $.trim( cmp.getValue() );

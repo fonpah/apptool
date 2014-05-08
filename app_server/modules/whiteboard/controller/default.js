@@ -6,7 +6,7 @@
     var mongodb = require('mongodb' );
 var DefaultCtrl = {
     indexAction: function ( req, res, next ) {
-        return res.render( 'whiteboard/index' );
+        return res.render( 'whiteboard/index',{type:req.query.type} );
     },
     activityAction: function(req, res, next){
         console.log(req.param('id'));
@@ -58,16 +58,6 @@ var DefaultCtrl = {
             ]
         };
         return res.json({success:true,form:form});
-    },
-    saveWorkspaceAction: function(req, res, next){
-        var data = JSON.parse(req.body.workspace);
-        activities.update({_id:new mongodb.ObjectID(req.param('id'))},{$set:{artifacts: data}},{multi:false},function(){
-            return res.json({success:true,message:'ok', data: req.body.workspace});
-        });
-        //return res.json({success:true,message:'ok', data: req.body});
-    },
-    saveArtifactAction :function(req, res, next){
-
     }
 };
 

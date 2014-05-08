@@ -33,7 +33,6 @@ Ext.define('App.node.Artifact', {
             figure: this
         } );
         this.contentForm = App.current.contentFormBuilder.buildForm({figure:this});
-        //App.current.updatePropertyFormPanel( this.propertyForm );
 
     },
     createSet: function () {

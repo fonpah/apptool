@@ -44,7 +44,17 @@ Ext.define( 'App.Application', {
             remove: true,
             listeners: {
                 afteranimate: function ( el, startTime, eOpts ) {
-                    me.createViewport();
+                    if(type =='read'){
+                        me.loadActivity('5368e07d90c5351ba9722df9');
+                    }
+                    else if( type == 'review'){
+                        me.loadActivity('5368e0ec90c5351ba9722dfa');
+                    }
+                    else if(type=='create'){
+                        me.loadActivity('5367ffbab77611b15e4a88d1');
+                    }else{
+                        me.util.showErrorMsg('Invalid Activity type');
+                    }
                 }
             }
         } );
@@ -57,6 +67,7 @@ Ext.define( 'App.Application', {
             margins: '0 0 0 5',
             activeTab:0
         } );
+       this.mainContentCmp.loadMask = new Ext.LoadMask(this.mainContentCmp, {msg: "Loading, please wait..."});
     },
     initNorthPanelCmp: function () {
         this.initTopToolBarCmp();
@@ -162,7 +173,7 @@ Ext.define( 'App.Application', {
         me.eastPanelCmp.setActiveTab(form);
         me.eastPanelCmp.expand();
     },
-    createViewport: function () {
+    createViewport: function (activity) {
         var me = this;
         Ext.create( 'Ext.Viewport', {
             id: 'application_viewpoint',
@@ -174,7 +185,7 @@ Ext.define( 'App.Application', {
                 me.southPanelCmp
             ]
         } );
-        this.openActivity();
+        this.openActivity(activity);
     },
     createConnection: function ( sourcePort, targetPort ) {
         var me = this;
@@ -185,13 +196,54 @@ Ext.define( 'App.Application', {
         conn.entityType = 'connection';
         return conn;
     },
-    openActivity: function () {
-        var activity = null;
-        activity = Ext.create( 'App.activity.CreateActivity',{
-            ajax: this.ajax,
-            util: this.util
+    loadActivity: function ( id ) {
+        var me = this;
+        this.ajax.loadActivity( id, function ( json ) {
+            var config = {
+                id:id,
+                canStart:json['role']['type']=='facilitator'?true:false,
+                title:json.title
+            };
+            if(json.status ==0){
+                me.util.blockUI(config);
+            }else if(json.status ==2){
+                me.util.blockUI(config);
+            }
+            else{
+                me.createViewport(json);
+            }
         } );
-        activity.loadActivity('5367ffbab77611b15e4a88d1');
+    },
+    openActivity: function (json) {
+        var activity = null;
+        this.mainContentCmp.loadMask.show();
+        if(json.type =='read'){
+            activity = Ext.create( 'App.activity.ReadActivity',{
+                ajax: this.ajax,
+                util: this.util,
+                activity:json
+            } );
+
+        }
+        else if( json.type == 'review'){
+            activity = Ext.create( 'App.activity.ReviewActivity',{
+                ajax: this.ajax,
+                util: this.util,
+                activity:json
+            } );
+        }
+        else if(json.type=='create'){
+            activity = Ext.create( 'App.activity.CreateActivity',{
+                ajax: this.ajax,
+                util: this.util,
+                activity:json
+            } );
+        }
+        else{
+            this.util.showErrorMsg('Invalid Activity type');
+            this.mainContentCmp.loadMask.hide();
+        }
+
     },
     addCmdButtons: function ( btns ) {
         this.commOpBarCmp.add( btns );
