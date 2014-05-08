@@ -16,7 +16,6 @@ var DefaultCtrl = {
 
            return res.json({success:true, activity: doc});
        });
-
     },
     propertyFormAction: function(req, res, next){
         var form ={

@@ -14,12 +14,12 @@ Ext.define('App.util.Ajax', {
                     callback(result.form);
                 }
                 else {
-                    me.showErrorMsg(result.message);
+                    App.current.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                me.showErrorMsg('Oh no! Something went wrong!');
+                App.current.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
@@ -34,12 +34,12 @@ Ext.define('App.util.Ajax', {
                     callback(result.activity);
                 }
                 else {
-                    me.showErrorMsg(result.message);
+                    App.current.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                me.showErrorMsg('Oh no! Something went wrong!');
+                App.current.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
