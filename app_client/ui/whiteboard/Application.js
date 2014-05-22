@@ -1,22 +1,21 @@
 /**
  * Created by fonpah on 02.05.2014.
  */
-var app= null;
+var app = null;
 Ext.define( 'App.Application', {
     name: 'App',
     extend: 'Ext.app.Application',
     appFolder: '/ui/whiteboard',
-    postfixNr:0,
+    postfixNr: 0,
     appProperty: 'current',
-    currentCanvas:null,
-    splashscreen: {},
+    models: ['User','Activity','Connection'],
+    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
+    controllers:['board','property','controls','socketio'],
+    currentCanvas: null,
+    activity:null,
+    user:null,
     init: function () {
-        splashscreen = Ext.getBody().mask( 'Loading Application', 'splashscreen' );
-        splashscreen.addCls( 'splashscreen' );
-        Ext.DomHelper.insertFirst( Ext.query( '.x-mask-msg' )[0], {
-            cls: 'x-splash-icon'
-        } );
-        this.defaultRouter= new draw2d.layout.connection.SplineConnectionRouter();
+        this.defaultRouter = new draw2d.layout.connection.SplineConnectionRouter();
         this.util = Ext.create( 'App.util.Util' );
         this.ajax = Ext.create( 'App.util.Ajax' );
         this.initMainContentCmp();
@@ -24,50 +23,28 @@ Ext.define( 'App.Application', {
         this.initSouthPanelCmp();
         this.initEastPanelCmp();
         this.initPropertyForm();
-        this.propertyFormBuilder = Ext.create('App.builder.PropertyFormBuilder');
-        this.contentFormBuilder = Ext.create('App.builder.ContentFormBuilder');
+        this.propertyFormBuilder = Ext.create( 'App.builder.PropertyFormBuilder' );
+        this.contentFormBuilder = Ext.create( 'App.builder.ContentFormBuilder' );
+        //console.log('init app');
 
     },
     launch: function () {
         var me = this;
         Ext.state.Manager.setProvider( Ext.create( 'Ext.state.CookieProvider' ) );
         Ext.tip.QuickTipManager.init();
-        var task = new Ext.util.DelayedTask( function () {
-            splashscreen.fadeOut( {
-                duration: 2000,
-                remove: true
-            } );
-        } );
-
-        splashscreen.next().fadeOut( {
-            duration: 2000,
-            remove: true,
-            listeners: {
-                afteranimate: function ( el, startTime, eOpts ) {
-                    if(type =='read'){
-                        me.loadActivity('5368e07d90c5351ba9722df9');
-                    }
-                    else if( type == 'review'){
-                        me.loadActivity('5368e0ec90c5351ba9722dfa');
-                    }
-                    else if(type=='create'){
-                        me.loadActivity('5367ffbab77611b15e4a88d1');
-                    }else{
-                        me.util.showErrorMsg('Invalid Activity type');
-                    }
-                }
-            }
-        } );
-        task.delay( 1000 );
+        me.createViewport();
+        this.loadActivity();
+        this.loadUser();
+        //console.log('launch app');
     },
     initMainContentCmp: function () {
         this.mainContentCmp = Ext.create( 'Ext.tab.Panel', {
             region: 'center', // a center
             deferredRender: false,
             margins: '0 0 0 5',
-            activeTab:0
+            activeTab: 0
         } );
-       this.mainContentCmp.loadMask = new Ext.LoadMask(this.mainContentCmp, {msg: "Loading, please wait..."});
+        this.mainContentCmp.loadMask = new Ext.LoadMask( this.mainContentCmp, {msg: "Loading, please wait..."} );
     },
     initNorthPanelCmp: function () {
         this.initTopToolBarCmp();
@@ -75,7 +52,6 @@ Ext.define( 'App.Application', {
             id: 'top_panel',
             region: 'north',
             layout: 'anchor',
-
             frame: false,
             border: false,
             bodyStyle: 'background:transparent; padding: 5px',
@@ -129,13 +105,11 @@ Ext.define( 'App.Application', {
     },
     initTopToolBarCmp: function () {
         this.initTitleCmp();
-        this.initCommOpBarCmp();
         this.topToolBarCmp = Ext.create( 'Ext.Toolbar', {
             style: 'padding-left: 0',
             items: [
                 this.titleCmp,
-                { xtype: 'tbspacer', width: 50 },
-                this.commOpBarCmp
+                { xtype: 'tbspacer', width: 50 }
             ]
         } );
     },
@@ -147,33 +121,17 @@ Ext.define( 'App.Application', {
 
             defaultText: '',
             defaultIconCls: 'x-status-valid',
-
-            // values to set initially:
             text: 'Ready',
             iconCls: 'x-status-valid'
-
-            // any standard Toolbar items:
-            //items: ['-', 'Build: ' + devInfoStr]
         } );
     },
-    initPropertyForm: function(){
+    initPropertyForm: function () {
         var me = this;
-        this.ajax.loadPropertyForm(function(form){
+        this.ajax.loadPropertyForm( function ( form ) {
             me.propertyForm = form;
-        });
+        } );
     },
-    updatePropertyFormPanel: function(form){
-        var me = this;
-        if(!form){
-            return;
-        }
-        if(!Ext.get(form.getId())){
-            me.eastPanelCmp.add(form);
-        }
-        me.eastPanelCmp.setActiveTab(form);
-        me.eastPanelCmp.expand();
-    },
-    createViewport: function (activity) {
+    createViewport: function ( activity ) {
         var me = this;
         Ext.create( 'Ext.Viewport', {
             id: 'application_viewpoint',
@@ -185,65 +143,42 @@ Ext.define( 'App.Application', {
                 me.southPanelCmp
             ]
         } );
-        this.openActivity(activity);
+        // this.openActivity(activity);
     },
     createConnection: function ( sourcePort, targetPort ) {
         var me = this;
-        if(me.currentCanvas.isDupConnection(sourcePort, targetPort)){
+        if ( me.currentCanvas.isDupConnection( sourcePort, targetPort ) ) {
             return false
         }
         var conn = new App.node.Connection();
         conn.entityType = 'connection';
+        conn.activityId = me.activity.get('id');
+        var task = new Ext.util.DelayedTask(function(){
+            me.getController('board' ).fireEvent('createconnection', conn, me.currentCanvas);
+        });
+        task.delay(100);
         return conn;
     },
-    loadActivity: function ( id ) {
+    loadActivity: function (  ) {
         var me = this;
-        this.ajax.loadActivity( id, function ( json ) {
-            var config = {
-                id:id,
-                canStart:json['role']['type']=='facilitator'?true:false,
-                title:json.title
-            };
-            if(json.status ==0){
-                me.util.blockUI(config);
-            }else if(json.status ==2){
-                me.util.blockUI(config);
-            }
-            else{
-                me.createViewport(json);
-            }
-        } );
-    },
-    openActivity: function (json) {
-        var activity = null;
         this.mainContentCmp.loadMask.show();
-        if(json.type =='read'){
-            activity = Ext.create( 'App.activity.ReadActivity',{
-                ajax: this.ajax,
-                util: this.util,
-                activity:json
-            } );
+        this.getActivityModel().load(activityId,{
+            success:function(activity){
+                me.activity= activity;
+                me.fireEvent('openwhiteboard', me.mainContentCmp);
+                me.fireEvent('loadstore', me.activity);
+                me.mainContentCmp.loadMask.hide();
+            }
+        });
 
-        }
-        else if( json.type == 'review'){
-            activity = Ext.create( 'App.activity.ReviewActivity',{
-                ajax: this.ajax,
-                util: this.util,
-                activity:json
-            } );
-        }
-        else if(json.type=='create'){
-            activity = Ext.create( 'App.activity.CreateActivity',{
-                ajax: this.ajax,
-                util: this.util,
-                activity:json
-            } );
-        }
-        else{
-            this.util.showErrorMsg('Invalid Activity type');
-            this.mainContentCmp.loadMask.hide();
-        }
-
+    },
+    loadUser:function(){
+        var me = this;
+        this.getUserModel().load(userId,{
+            success: function(user){
+                me.user= user;
+            }
+        })
     },
     addCmdButtons: function ( btns ) {
         this.commOpBarCmp.add( btns );
@@ -251,43 +186,24 @@ Ext.define( 'App.Application', {
     createNewTab: function ( config ) {
         var tabItem = this.mainContentCmp.add( config );
         tabItem.show();
-        this.mainContentCmp.setActiveTab(tabItem);
-        tabItem.fireEvent('tabactivate',tabItem);
+        this.mainContentCmp.setActiveTab( tabItem );
+        tabItem.fireEvent( 'tabactivate', tabItem );
         return tabItem;
-    },
-    collapsePropertyFormPanel: function(){
-        this.eastPanelCmp.collapse();
-    },
-    openContentWindowFromFigure: function(activity, figure){
-        var me = this;
-        Ext.create('Ext.window.Window',{
-            title:me.util.shortenString(figure.title,11),
-            closable:true,
-            minWidth:500,
-            layout:'fit',
-            minHeight:300,
-            modal:true,
-            padding:5,
-            html:figure.content || 'No Content Available'
-        } ).show();
     }
-
 } );
-
-
-
-
-
 
 
 //Start
 Ext.onReady( function () {
-    Ext.create( 'App.Application' );
-    draw2d.Connection.createConnection= function(sourcePort, targetPort){
-      return App.current.createConnection(sourcePort, targetPort);
+    document.oncontextmenu= function(){
+        return true;
+    }
+    app = Ext.create( 'App.Application' );
+    draw2d.Connection.createConnection = function ( sourcePort, targetPort ) {
+        return App.current.createConnection( sourcePort, targetPort );
     };
-    draw2d.util.UUID.create = function(){
-        var id =App.current.util.uuid();
-        return id.replace('-','');
+    draw2d.util.UUID.create = function () {
+        var id = App.current.util.uuid();
+        return id.replace( '-', '' );
     };
 } );

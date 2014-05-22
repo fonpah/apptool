@@ -6,20 +6,19 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
     constructor: function ( config ) {
     },
     buildForm: function ( config ) {
-        var fields = this.buildFields( config.fields, config.figure );
-        var btns = this.buildButtons( config.buttons, config.figure );
+        var controller = config.controller;
+        var fields = this.buildFields( config.fields, config.figure ,controller);
         var form = Ext.create( 'Ext.form.Panel', {
             title: config.title,
             items: fields || [],
-            id: config.formId,
-            buttons: btns || [],
+            itemId: config.itemId,
             listeners: this.propertyFormListener(),
             margin: '5'
         } );
         form.figure = config.figure;
         return form;
     },
-    buildFields: function ( fields, figure ) {
+    buildFields: function ( fields, figure, controller) {
         for ( var i = 0; i < fields.length; i++ ) {
             if ( fields[i]['required'] ) {
                 fields[i]['afterLabelTextTpl'] = App.current.util.required;
@@ -30,7 +29,7 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
                 fields[i]['value'] = figure[fields[i]['name']];
             }
             if ( fields[i]['listeners'] ) {
-                var listeners = this.buildPropertyFormItemListener( fields[i]['listeners'] );
+                var listeners = this.buildPropertyFormItemListener( fields[i]['listeners'],controller );
                 fields[i]['listeners'] = listeners;
             }
             if(this.isReadOnly){
@@ -53,12 +52,15 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
         }
         return buttons;
     },
-    buildPropertyFormItemListener: function ( listeners ) {
+    buildPropertyFormItemListener: function ( listeners, controller ) {
         var me = this;
-        var events = {};
+        var events = {scope:controller};
         Ext.Object.each( listeners, function ( event, handler ) {
             if ( handler == 'changeTitle' ) {
-                events[event] = me.onChangeTitle;
+                events[event] = controller.onChangeTitle;
+            }
+            if ( handler == 'changeDescription' ) {
+                events[event] = controller.onChangeDescription;
             }
         } );
         return events;
@@ -89,7 +91,14 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
         var me = this;
         var description = $.trim( cmp.getValue() );
         if ( description.length !== 0 ) {
-            me.getFigure().decsription = description;
+            cmp.up('form' ).figure.decsription = description;
+        }
+    },
+    onBlur: function(cmp){
+        var me = this;
+        var text = $.trim(cmp.getValue());
+        if(text.length!==0){
+            console.log('blur');
         }
     }
 

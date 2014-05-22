@@ -6349,15 +6349,7 @@ draw2d.Connection = draw2d.shape.basic.PolyLine.extend({NAME: "draw2d.Connection
         parentNode = parentNode.getParent();
     }
     memento.target = {node: parentNode.getId(), port: this.getTarget().getName()};
-    // [Modification] added by disi 13-08-11T16:49
-    memento.targetDecoratorName = this.targetDecoratorName;
-    memento.modelLevel = this.modelLevel;
-    memento.domainId = this.domainId;
-    memento.entityType = 'connection';
-    memento.lineType = this.lineType;
-    memento.dashType = this.dashType;
-    memento.docId = this.docId;
-    // [End of Modification] added by disi 13-08-11T16:49
+
     return memento;
 }, setPersistentAttributes: function (memento) {
     this._super(memento);

@@ -1,0 +1,13 @@
+script.
+    $(function(){
+        $('#menu a').filter(function() {
+            var url = window.location.href;
+            return this.href == url;
+        }).closest('li').addClass('active');
+    });
+
+#footer
+    .container
+        p(class="text-muted credit" ) Copyright &copy;2013&nbsp;
+            |Project Project NPRP: NPRP 5-051-1-015. Project entitled; "PLATE: Problem-based Learning Authoring and Transformation Environment"
+

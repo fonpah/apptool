@@ -33,6 +33,16 @@ Ext.define('App.node.Artifact', {
             figure: this
         } );
         this.contentForm = App.current.contentFormBuilder.buildForm({figure:this});
+        this.comments= Ext.create('Ext.data.ArrayStore',{
+            storeId:'comments',
+            fields:[
+                {name:'userId',type:'string'},
+                {name:'text',type:'string'},
+                {name:'artifactId',type:'string'},
+                {name:'activityId', type:'string'}
+
+            ]
+        });
 
     },
     createSet: function () {

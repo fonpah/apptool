@@ -1,34 +1,66 @@
 /**
  * Created by fonpah on 02.05.2014.
  */
+var db = require('../_server/appDatabase' ).db;
+var appSocket = require('../modules/_common/controller/socket' ).getSocket();
+var IndexCtrl = require('../modules/whiteboard/controller/index' );
+var ActivityCtrl =  require('../modules/whiteboard/controller/activity');
+var ArtifactCtrl = require('../modules/whiteboard/controller/artifact');
+var ConnCtrl =  require('../modules/whiteboard/controller/connection');
+var UserCtrl =  require('../modules/whiteboard/controller/user');
+var CommentCtrl =  require('../modules/whiteboard/controller/comment');
+var ContentCtrl = require('../modules/whiteboard/controller/content');
 
-var defaultCtrl = require('../modules/whiteboard/controller/default');
-var activityCtrl = require('../modules/whiteboard/controller/activity');
 module.exports= function(app){
+    var indexCtrl = new IndexCtrl(db,appSocket);
+    var activityCtrl = new ActivityCtrl(db,appSocket);
+    var artifactCtrl = new ArtifactCtrl(db,appSocket);
+    var connCtrl = new ConnCtrl(db, appSocket);
+    var userCtrl = new UserCtrl(db, appSocket);
+    var commentCtrl = new CommentCtrl(db, appSocket);
+    var contentCtrl = new ContentCtrl(db,appSocket);
     app.get('/',function(req, res, next){
-        defaultCtrl.indexAction(req, res, next);
+        indexCtrl.indexAction(req, res, next);
     });
-    app.get('/whiteboard',function(req, res, next){
-        defaultCtrl.indexAction(req, res, next);
+    app.get('/whiteboard/:id',function(req, res, next){
+        indexCtrl.readAction(req, res, next);
     });
 
-    app.get('/whiteboard/activity/:id',function(req, res, next){
-        activityCtrl.activityAction(req, res, next);
+    app.get('/activity/read',function(req, res, next){
+        activityCtrl.readAction(req, res, next);
+    });
+    app.get('/user/read',function(req, res, next){
+        userCtrl.readAction(req,res, next);
     });
     app.get('/whiteboard/property/form',function(req, res, next){
-        defaultCtrl.propertyFormAction(req, res, next);
+        indexCtrl.propertyFormAction(req, res, next);
     });
-    app.post('/whiteboard/save/:id',function(req, res, next){
-        activityCtrl.saveWorkspaceAction(req, res, next);
+
+
+    app.get('/artifacts',function(req, res, next){
+        artifactCtrl.listAction(req, res, next);
     });
-    app.post('/whiteboard/artifact/save/:id',function(req, res, next){
-        activityCtrl.saveArtifactAction(req, res, next);
+    app.post('/artifact/create',function(req, res, next){
+        artifactCtrl.createAction(req, res, next);
     });
-    app.get('/whiteboard/activity/start/:id',function(req, res, next){
-        activityCtrl.startAction(req, res, next);
+    app.post('/artifact/update',function(req, res, next){
+        artifactCtrl.updateAction(req, res, next);
     });
-    app.post('/whiteboard/activity/stop/:id',function(req, res, next){
-        activityCtrl.stopAction(req, res, next);
+    app.post('/artifact/delete',function(req, res, next){
+        artifactCtrl.deleteAction(req, res, next);
+    });
+
+    app.get('/connections',function(req, res, next){
+        connCtrl.listAction(req, res, next);
+    });
+    app.post('/connection/create',function(req, res, next){
+        connCtrl.createAction(req, res, next);
+    });
+    app.post('/connection/update',function(req, res, next){
+        connCtrl.updateAction(req, res, next);
+    });
+    app.post('/connection/delete',function(req, res, next){
+        connCtrl.deleteAction(req, res, next);
     });
     return app;
 }

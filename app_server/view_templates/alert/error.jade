@@ -7,8 +7,3 @@ block content
         h1=title
     div(class="alert alert-danger")
         =msg
-        p
-            - var anchorText = url && url.anchorText ? url.anchorText:'Back to Login'
-            - var href = url && url.href ?url.href:'/'
-            a(href=href, class="alert-link")
-                =anchorText
