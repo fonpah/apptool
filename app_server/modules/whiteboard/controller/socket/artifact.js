@@ -9,55 +9,60 @@ var Artifact = Class.extend({
         this.db = db;
         this.socket = appSocket;
         this.collection = this.db.collection('artifacts');
-        this.socket.on('client/artifact/create',function(data){me.createAction(data);});
-        this.socket.on('client/artifact/update', function(data){me.updateAction(data);});
-        this.socket.on('client/artifact/delete', function(data){me.deleteAction(data);});
+        this.socket.on('/artifact/create',function(data){me.createAction(data);});
+        this.socket.on('/artifact/update', function(data){me.updateAction(data);});
+        this.socket.on('/artifact/delete', function(data){me.deleteAction(data);});
+        this.socket.on('/artifacts', function(data){me.listAction(data);});
     } ,
     updateAction:function(data){
         var me = this;
         var id = data._id;
         delete data._id;
-        me.collection.update({_id:new mongodb.ObjectID(id)},{$set:data},{multi:false},function(err,record){
-            if(err) return me.socket.emit('server/artifact/update/feedback',{success:false,message:err.message});
-            me.socket.emit('server/artifact/update/feedback',{success:true,artifact:{_id:id}});
-            data._id = id;
-            me.socket.broadcast.emit('server/artifact/updated',{success:true,artifact:data});
-
+        me.collection.findAndModify({_id:new mongodb.ObjectID(id)},[],{$set:data},{new:true},function(err, doc){
+            if(err) return me.socket.emit('/artifact/update',{success:false,message:err.message});
+             me.socket.broadcast.emit('/artifact/update',{success:true,artifact:doc});
+             me.socket.emit('/artifact/update',{success:true,message:'ok'});
         });
     },
     deleteAction:function(data){
         var me = this;
-        this.collection.remove({_id:new mongodb.ObjectID(data._id)},function(err){
-            if(err) return me.socket.emit('server/artifact/delete/feedback',{success:false,message:err.message});
-            me.socket.emit('server/artifact/delete/feedback',{success:true,artifact:data});
-            me.socket.broadcast.emit('server/artifact/deleted',{success:true,artifact:data});
+        this.collection.findOne({_id:new mongodb.ObjectID(data._id)},function(err,doc){
+            if(err) return me.socket.emit('/artifact/delete',{success:false,message:err.message});
+            var model= doc;
+            me.collection.remove({_id:new mongodb.ObjectID(data._id)},function(err){
+                if(err) return me.socket.emit('/artifact/delete',{success:false,message:err.message});
+                me.socket.emit('/artifact/delete',{success:true,artifact:data});
+                me.socket.broadcast.emit('/artifact/delete',{success:true,artifact:model});
+            });
+
         });
     },
     createAction:function(data){
         var me = this;
-        delete data._id;
-        this.collection.insert(data,function(err,record){
-            if(err) return me.socket.emit('server/artifact/create/feedback',{success:false,message:err.message});
-            me.socket.emit('server/artifact/create/feedback',{success:true,artifact:record[0]});
-            me.socket.broadcast.emit('server/artifact/created',{success:true,artifact:record[0]});
+        this.collection.insert(data,function(err,records){
+            if(err) return me.socket.emit('/artifact/create',{success:false,message:err.message});
+            me.socket.emit('/artifact/create',{success:true,artifact:records});
+            me.socket.broadcast.emit('/artifact/create',{success:true,artifact:records});
         });
     },
     removeListeners:function(){
-        this.socket.removeAllListeners('client/artifact/create');
-        this.socket.removeAllListeners('client/artifact/delete');
-        this.socket.removeAllListeners('client/artifact/update');
+        this.socket.removeAllListeners('/artifact/create');
+        this.socket.removeAllListeners('/artifact/delete');
+        this.socket.removeAllListeners('/artifact/update');
+        this.socket.removeAllListeners('/artifacts');
 
-    }
-    /*,
-    listAction:function(req, res, next){
-        var  id = req.param('id');
+    },
+    listAction:function(data){
+        var me = this;
+        var  id = data.activityId;
         if(!id){
-            return res.json({success:false,message:'Invalid Id'});
+            return this.socket.emit('/artifacts',{success:false,message:'Invalid Id'});
         }
         this.collection.find({activityId : id } ).toArray(function(err, records){
-            if(err) return res.json({success:false,message:err.message});
-            return res.json({success:true,artifacts:records});
+            if(err) return me.socket.emit('/artifacts',{success:false,message:err.message});
+
+            return me.socket.emit('/artifacts',{success:true,artifact:records});
         });
-    }*/
+    }
 });
 module.exports = Artifact;

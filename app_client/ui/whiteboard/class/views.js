@@ -10,11 +10,11 @@ Ext.define( 'App.view.Board', {
         this.title = model.get( 'title' );
         this.description = model.get( 'description' );
         this.status = model.get( 'status' );
-        this.canvasHolderEltId = model.get( 'id' );
+        this.canvasHolderEltId = model.get( '_id' );
         this.contentEl = this.canvasHolderEltId + '_holder';
         this.createHolderElement( this.canvasHolderEltId );
         this.tabId = 'tab_' + this.canvasHolderEltId;
-        this.activityId = model.get( 'id' );
+        this.activityId = model.get( '_id' );
         this.id = this.tabId;
         this.autoScroll = true;
         this.closable = false;
@@ -113,7 +113,7 @@ Ext.define('App.view.ContentForm', {
         items:[
             {
                 xtype: 'htmleditor',
-                name: 'content',
+                name: 'data',
                 height: 300,
                 allowBlank:false
             }
@@ -134,6 +134,73 @@ Ext.define( 'App.window.Content', {
     minWidth: 500,
     layout: 'fit',
     minHeight: 300,
+    height:300,
+    width:500,
     modal: true,
-    padding: 5
+    maximizable:true,
+    autoScroll: true,
+    closeAction:'destroy',
+    glyph:'xf039@fa',
+    padding:5
 } );
+
+
+Ext.define('App.view.Comment',{
+    extend:'Ext.view.View',
+    alias:'widget.commentsview',
+    autoEl:'ul',
+    emptyText: 'No images available',
+    tpl:[
+        '<tpl for=".">',
+        '<li class="list-row">{text}</li>',
+        '</tpl>'
+    ]
+});
+Ext.define('App.panel.comment',{
+    extend:'Ext.panel.Panel',
+    alias:'widget.commentspanel',
+    border:true,
+    region:'center',
+    frame:false,
+    bodyStyle:{
+        padding:'5px',
+        whiteSpace:'pre-wrap',
+        fontFamily:'monospace',
+        fontSize:'12px'
+    },
+    autoScroll:true,
+    bbar:[
+        {
+            xtype: 'textareafield',
+            name: 'text',
+            allowBlank: false
+        },
+        {
+            action:'send-comment',
+            text : 'Send',
+            xtype:'button',
+            scale: 'large'
+        }
+    ],
+    listeners:{
+        resize:function(cmp){
+            cmp.body.scroll('b',Infinity);
+            cmp.down('textareafield' ).setWidth(cmp.getWidth()-cmp.down('button' ).getWidth()-15);
+        }
+    }
+
+});
+Ext.define('App.window.Comment',{
+    extend:'Ext.window.Window',
+    alias:'widget.commentswindow',
+    closable:true,
+    maximizable:true,
+    resizable:true,
+    minWidth:800,
+    minHeight:400,
+    layout:'fit',
+    modal:true,
+    closeAction:'destroy',
+    glyph:'xf086@fa'
+});
+

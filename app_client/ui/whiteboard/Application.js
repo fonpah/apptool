@@ -8,14 +8,17 @@ Ext.define( 'App.Application', {
     appFolder: '/ui/whiteboard',
     postfixNr: 0,
     appProperty: 'current',
-    models: ['User','Activity','Connection'],
-    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
-    controllers:['board','property','controls','socketio'],
+    models: ['User','Activity','Connection','Artifact','Content','Comment'],
+    stores: ['Artifacts', 'Connections', 'Comments'/*, 'Contents'*/],
+    controllers:['board','property','controls','content','comment'],
     currentCanvas: null,
     activity:null,
     user:null,
     init: function () {
+        this.addEvents('loadstore');
         this.defaultRouter = new draw2d.layout.connection.SplineConnectionRouter();
+        this.fullPath = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+        this.establishRealTimeCom();
         this.util = Ext.create( 'App.util.Util' );
         this.ajax = Ext.create( 'App.util.Ajax' );
         this.initMainContentCmp();
@@ -25,7 +28,28 @@ Ext.define( 'App.Application', {
         this.initPropertyForm();
         this.propertyFormBuilder = Ext.create( 'App.builder.PropertyFormBuilder' );
         this.contentFormBuilder = Ext.create( 'App.builder.ContentFormBuilder' );
-        //console.log('init app');
+
+
+    },
+    establishRealTimeCom: function () {
+        var me = this;
+        this.socket = io.connect(this.fullPath);
+        me.getArtifactsStore().getProxy().setSocket(me.socket);
+        me.getConnectionsStore().getProxy().setSocket(me.socket);
+        //me.getContentsStore().getProxy().setSocket(me.socket);
+        me.getCommentsStore().getProxy().setSocket(me.socket);
+        this.socket.on('connected', function (data) {
+            console.log(data);
+            me.getArtifactsStore().getProxy().removeEvents(me.socket);
+            me.getArtifactsStore().getProxy().bindEvents(me.socket);
+            me.getConnectionsStore().getProxy().removeEvents(me.socket);
+            me.getConnectionsStore().getProxy().bindEvents(me.socket);
+            me.getCommentsStore().getProxy().removeEvents(me.socket);
+            me.getCommentsStore().getProxy().bindEvents(me.socket);
+            /*me.getContentsStore().getProxy().removeEvents(me.socket);
+            me.getContentsStore().getProxy().bindEvents(me.socket);*/
+
+        });
 
     },
     launch: function () {
@@ -35,7 +59,7 @@ Ext.define( 'App.Application', {
         me.createViewport();
         this.loadActivity();
         this.loadUser();
-        //console.log('launch app');
+
     },
     initMainContentCmp: function () {
         this.mainContentCmp = Ext.create( 'Ext.tab.Panel', {
@@ -152,7 +176,7 @@ Ext.define( 'App.Application', {
         }
         var conn = new App.node.Connection();
         conn.entityType = 'connection';
-        conn.activityId = me.activity.get('id');
+        conn.activityId = me.activity.get('_id');
         var task = new Ext.util.DelayedTask(function(){
             me.getController('board' ).fireEvent('createconnection', conn, me.currentCanvas);
         });
@@ -165,10 +189,15 @@ Ext.define( 'App.Application', {
         this.getActivityModel().load(activityId,{
             success:function(activity){
                 me.activity= activity;
-                me.fireEvent('openwhiteboard', me.mainContentCmp);
-                me.fireEvent('loadstore', me.activity);
+                me.fireEvent('openwhiteboard', me.mainContentCmp, me.activity);
                 me.mainContentCmp.loadMask.hide();
-            }
+            },
+            failure:function(){
+                Ext.Error.raise('something went wrong with the server');
+            }/*,
+            params:{
+                _id:activityId
+            }*/
         });
 
     },
@@ -197,7 +226,7 @@ Ext.define( 'App.Application', {
 Ext.onReady( function () {
     document.oncontextmenu= function(){
         return true;
-    }
+    };
     app = Ext.create( 'App.Application' );
     draw2d.Connection.createConnection = function ( sourcePort, targetPort ) {
         return App.current.createConnection( sourcePort, targetPort );

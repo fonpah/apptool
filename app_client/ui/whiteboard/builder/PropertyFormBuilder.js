@@ -19,6 +19,7 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
         return form;
     },
     buildFields: function ( fields, figure, controller) {
+        var model = controller.getArtifactsStore().findRecord('id',figure.id,0,false,true,true);
         for ( var i = 0; i < fields.length; i++ ) {
             if ( fields[i]['required'] ) {
                 fields[i]['afterLabelTextTpl'] = App.current.util.required;
@@ -32,9 +33,12 @@ Ext.define( 'App.builder.PropertyFormBuilder', {
                 var listeners = this.buildPropertyFormItemListener( fields[i]['listeners'],controller );
                 fields[i]['listeners'] = listeners;
             }
-            if(this.isReadOnly){
+            if(!controller.isAuthorized(model)){
                 fields[i]['disabled']= true;
             }
+            /*if(this.isReadOnly){
+                fields[i]['disabled']= true;
+            }*/
         }
         return fields;
     },

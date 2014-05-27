@@ -12,16 +12,17 @@ exports.startSocketIo = function(server){
     socketIo = socketIo.listen(server);
     socketIo.sockets.on('connection', function (socket) {
         appSocket = socket;
-        var msg = {success:true, message:'hallo there'};
+        var msg = {success:true, message:'hallo there!'};
         socket.emit('connected', msg);
-        //console.log(socketIo.sockets.clients());
-        //socket.emit('clients',socketIo.sockets.clients());
-
         var artifact =new socketHandlers.Artifact(db, socket);
         var conn = new  socketHandlers.Connection(db, socket);
+        var content = new socketHandlers.Content(db,socket);
+        var comment = new socketHandlers.Comment(db, socket);
         socket.on('disconnect', function () {
             artifact.removeListeners();
             conn.removeListeners();
+            content.removeListeners();
+            comment.removeListeners();
         });
     });
 }

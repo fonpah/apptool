@@ -78,11 +78,10 @@ Ext.define('App.draw.Canvas',{
     addContextListener: function () {
         var me = this;
         this.el.on( 'contextmenu', me.showContextMenu, this );
-        this.el.on( 'dblclick', me.openContentWindow, this );
+        this.el.on( 'dblclick', me.onDblClick, this );
     },
-    openContentWindow: function(){
-        var me = this;
-        App.current.openContentWindowFromFigure( me.activity, me.currentTarget);
+    onDblClick:function(){
+        console.log(arguments);
     },
     removeContextListener: function () {
         var me = this;

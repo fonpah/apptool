@@ -13,12 +13,15 @@ var User = Class.extend({
 
     },
     readAction:function(req, res, next){
-        return res.json({success:true,user:{
-            id:'1234d5d6e87e98tzh31s97arz56478r',
-            firstName:'john',
-            lastName:'doe',
-            role:'student'
-        }});
+        var  id = req.param('id');
+        if(!id){
+            return res.json({success:false,message:'Invalid Id'});
+        }
+        this.collection.findOne({_id:new mongodb.ObjectID(id)},function(err,record){
+            if(err) return res.json({success:false,message:err.message});
+            res.json({success:true,user:record||{}});
+
+        });
     },
     deleteAction:function(req, res, next){
 

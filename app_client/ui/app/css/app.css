@@ -249,3 +249,11 @@ u.pointer {
 .x-status-error-list li a {
     color: #15428B;
 }
+.list-row {
+    border: 1px solid #f90;
+    border-radius: 5px;
+    cursor: pointer;
+    list-style: none outside;
+    padding: 5px;
+    margin-bottom: 10px;
+}

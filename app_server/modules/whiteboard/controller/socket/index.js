@@ -4,7 +4,11 @@
  */
 var Artifact = require('./artifact');
 var Connection = require('./connection');
+var Comment = require('./comment');
+var Content = require('./content');
 module.exports={
     Artifact:Artifact,
-    Connection:Connection
+    Connection:Connection,
+    Comment:Comment,
+    Content:Content
 }

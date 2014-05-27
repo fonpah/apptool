@@ -35,7 +35,8 @@ Ext.define( 'App.util.Util', {
             title: 'SUCCESS',
             msg: 'OK',
             icon: Ext.Msg.INFO,
-            buttons: Ext.Msg.OK
+            buttons: Ext.Msg.OK,
+            closeAction:'destroy'
         } );
     },
     capitaliseFirstLetter: function ( string ) {

@@ -2,10 +2,13 @@
  * Created by fonpah on 18.05.2014.
  */
 
+
+
 Ext.define('App.model.User',{
     extend:'Ext.data.Model',
+    idProperty: '_id',
     fields:[
-        {name:'id',type:'string'},
+        {name:'_id',type:'string'},
         {name:'firstName',type:'string'},
         {name:'lastName',type:'string'},
         {name:'role',type:'string'}
@@ -26,9 +29,9 @@ Ext.define('App.model.User',{
 
 Ext.define('App.model.Activity',{
     extend:'Ext.data.Model',
-    idProperty: 'id',
+    idProperty: '_id',
     fields:[
-        {name:'id',type:'string'},
+        {name:'_id',type:'string'},
         {name:'title',type:'string'},
         {name:'description',type:'string'},
         {name:'type',type:'string'},
@@ -50,6 +53,7 @@ Ext.define('App.model.Activity',{
 Ext.define('App.model.Artifact',{
     extend:'Ext.data.Model',
     idProperty: '_id',
+    clientIdProperty:'clientId',
     fields:[
         {name:'_id',type:'string'},
         {name:'id',type:'string'},
@@ -61,10 +65,11 @@ Ext.define('App.model.Artifact',{
         {name:'width',type:'int'},
         {name:'height',type:'int'},
         {name:'userId',type:'string'},
-        {name:'activityId',type:'string'}
-    ]/*,
+        {name:'activityId',type:'string'},
+        {name:'createdAt',type:'datetime',defaultValue:new Date().toJSON()}
+    ],
     proxy: {
-        type: 'ajax',
+        type: 'socket',
         api: {
             create:'/artifact/create',
             read:'/artifact/read',
@@ -79,13 +84,14 @@ Ext.define('App.model.Artifact',{
             type: 'json',
             root:'artifact'
         }
-    }*/
+    }
 });
 
 Ext.define('App.model.Connection',{
     extend:'Ext.data.Model',
     idProperty: '_id',
     fields:[
+        {name:'_id',type:'string'},
         {name:'userId',type:'string'},
         {name:'activityId',type:'string'},
         {name:'id',type:'string'},
@@ -95,10 +101,11 @@ Ext.define('App.model.Connection',{
         {name:'policy',type:'string'},
         {name:'router',type:'string'},
         'source',
-        'target'
+        'target',
+        {name:'createdAt',type:'datetime',defaultValue:new Date().toJSON()}
     ],
     proxy: {
-        type: 'ajax',
+        type: 'socket',
         api: {
             create:'/connection/create',
             read:'/connection/read',
@@ -120,12 +127,15 @@ Ext.define('App.model.Comment',{
     extend:'Ext.data.Model',
     idProperty: '_id',
     fields:[
+        {name:'_id',type:'string'},
         {name:'userId',type:'string'},
         {name:'activityId',type:'string'},
-        {name:'text',type:'string'}
+        {name:'artifactId',type:'string'},
+        {name:'text',type:'string'},
+        {name:'createdAt',type:'datetime',defaultValue:new Date().toJSON()}
     ],
     proxy: {
-        type: 'ajax',
+        type: 'socket',
         api: {
             create:'/comment/create',
             read:'/comment/read',
@@ -148,10 +158,13 @@ Ext.define('App.model.Content',{
     extend:'Ext.data.Model',
     idProperty: '_id',
     fields:[
+        {name:'_id',type:'string'},
         {name:'userId',type:'string'},
         {name:'activityId',type:'string'},
-        {name:'type',type:'string'},
-        'data'
+        {name:'type',type:'string',defaultValue:'text'},
+        {name:'artifactId',type:'string'},
+        'data',
+        {name:'createdAt',type:'datetime',defaultValue:new Date().toJSON()}
     ],
     proxy: {
         type: 'ajax',
@@ -167,7 +180,14 @@ Ext.define('App.model.Content',{
         },
         writer: {
             type: 'json',
-            root:'content'
+            root:'content',
+            writeAllFields: false
+        },
+        actionMethods: {
+            create: 'POST',
+            read: 'GET',
+            update: 'POST',
+            destroy: 'POST'
         }
     }
 });

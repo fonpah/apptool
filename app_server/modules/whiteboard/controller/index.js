@@ -2,6 +2,7 @@
  * Created by fonpah on 20.05.2014.
  */
 var Class = require('class.extend');
+var mongodb = require('mongodb' );
 var Index = Class.extend({
     init: function(db, appSocket){
         this.db = db;
@@ -15,7 +16,20 @@ var Index = Class.extend({
 
     },
     readAction:function(req, res, next){
-        return res.render( 'whiteboard/index',{activityId:'5368e07d90c5351ba9722df9',userId:'1234d5d6e87e98tzh31s97arz56478r'} );
+        var  id = req.params.id;
+        if(!id){
+            return  res.render('alert/error',{title:'Application Tool',msg:'Page not found!'});
+        }
+        this.collection.findOne({_id:new mongodb.ObjectID(id)},function(err,record){
+            if(err) return res.render('alert/error',{title:'Application Tool',msg:'Page not found!'});
+            if(!record){
+                return  res.render('alert/error',{title:'Application Tool',msg:'Page not found!'});
+            }
+            console.log(record);
+            return res.render( 'whiteboard/index',{activityId:record.activityId,userId:record.userId} );
+
+        });
+
     },
     deleteAction:function(req, res, next){
 

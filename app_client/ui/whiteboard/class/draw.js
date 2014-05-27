@@ -67,9 +67,13 @@ Ext.define('App.draw.Canvas',{
         this.el.on( 'contextmenu', me.showContextMenu, this );
         this.el.on( 'dblclick', me.openContentWindow, this );
     },
-    openContentWindow: function(){
+    openContentWindow: function(event,object){
         var me = this;
-        app.getController('board' ).fireEvent('dblclick',this, this.currentTarget);
+        if( me.currentTarget instanceof draw2d.SetFigure){
+            App.current.getController('content' ).fireEvent('dblclick',me.currentTarget);
+            return false;
+        }
+        //app.getController('board' ).fireEvent('dblclick',this, this.currentTarget);
     },
     removeContextListener: function () {
         var me = this;

@@ -62,5 +62,31 @@ module.exports= function(app){
     app.post('/connection/delete',function(req, res, next){
         connCtrl.deleteAction(req, res, next);
     });
+
+    app.get('/comment/read',function(req, res, next){
+        commentCtrl.readAction(req, res, next);
+    });
+    app.post('/comment/create',function(req, res, next){
+        commentCtrl.createAction(req, res, next);
+    });
+    app.post('/comment/update',function(req, res, next){
+        commentCtrl.updateAction(req, res, next);
+    });
+    app.post('/comment/delete',function(req, res, next){
+        commentCtrl.deleteAction(req, res, next);
+    });
+
+    app.get('/content/read',function(req, res, next){
+        contentCtrl.readAction(req, res, next);
+    });
+    app.post('/content/create',function(req, res, next){
+        contentCtrl.createAction(req, res, next);
+    });
+    app.post('/content/update',function(req, res, next){
+        contentCtrl.updateAction(req, res, next);
+    });
+    app.post('/content/delete',function(req, res, next){
+        contentCtrl.deleteAction(req, res, next);
+    });
     return app;
 }

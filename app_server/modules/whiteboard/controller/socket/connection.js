@@ -9,44 +9,70 @@ var Connection = Class.extend({
         this.db = db;
         this.socket = appSocket;
         this.collection = this.db.collection('connections');
-        this.socket.on('client/connection/create',function(data){me.createAction(data);});
-        this.socket.on('client/connection/update', function(data){me.updateAction(data);});
-        this.socket.on('client/connection/delete', function(data){me.deleteAction(data);});
+        this.socket.on('/connection/create',function(data){me.createAction(data);});
+        this.socket.on('/connection/update', function(data){me.updateAction(data);});
+        this.socket.on('/connection/delete', function(data){me.deleteAction(data);});
+        this.socket.on('/connections', function(data){me.listAction(data);});
     } ,
     updateAction:function(data){
         var me = this;
         var id = data._id;
         delete data._id;
-        me.collection.update({_id:new mongodb.ObjectID(id)},{$set:data},{multi:false},function(err,record){
-            if(err) return me.socket.emit('server/connection/update/feedback',{success:false,message:err.message});
-            me.socket.emit('server/connection/update/feedback',{success:true,connection:{_id:id}});
-            data._id = id;
-            me.socket.broadcast.emit('server/connection/updated',{success:true,connection:data});
-
+        me.collection.findAndModify({_id:new mongodb.ObjectID(id)},[],{$set:data},{new:true},function(err, doc){
+            if(err) return me.socket.emit('/connection/update',{success:false,message:err.message});
+            me.socket.emit('/connection/update',{success:true,message:'ok'});
+            me.socket.broadcast.emit('/connection/update',{success:true,connection:doc});
         });
     },
     deleteAction:function(data){
         var me = this;
-        this.collection.remove({_id:new mongodb.ObjectID(data._id)},function(err){
-            if(err) return me.socket.emit('server/connection/delete/feedback',{success:false,message:err.message});
-            me.socket.emit('server/connection/delete/feedback',{success:true,connection:data});
-            me.socket.broadcast.emit('server/connection/deleted',{success:true,connection:data});
+        var ids= [];
+        if(Array.isArray(data)){
+            for(var i=0; i<data.length;i++){
+                ids.push(new mongodb.ObjectID(data[i]._id));
+            }
+        }else{
+            ids.push(new mongodb.ObjectID(data._id));
+        }
+        this.collection.find({_id:{$in:ids}} ).toArray(function(err,docs){
+            if(err) return me.socket.emit('/connection/delete',{success:false,message:err.message});
+            var models= docs;
+            me.collection.remove({_id:{$in:ids}},function(err){
+                if(err) return me.socket.emit('/connection/delete',{success:false,message:err.message});
+
+                me.socket.emit('/connection/delete',{success:true,message:'ok'});
+
+                me.socket.broadcast.emit('/connection/delete',{success:true,connection:models});
+            });
+
         });
     },
     createAction:function(data){
         var me = this;
-        delete data._id;
-        this.collection.insert(data,function(err,record){
-            if(err) return me.socket.emit('server/connection/create/feedback',{success:false,message:err.message});
-            me.socket.emit('server/connection/create/feedback',{success:true,connection:record[0]});
-            me.socket.broadcast.emit('server/connection/created',{success:true,connection:record[0]});
+        this.collection.insert(data,function(err,records){
+            if(err) return me.socket.emit('/connection/create',{success:false,message:err.message});
+            me.socket.emit('/connection/create',{success:true,connection:records});
+            me.socket.broadcast.emit('/connection/create',{success:true,connection:records});
         });
     },
     removeListeners:function(){
-        this.socket.removeAllListeners('client/connection/create');
-        this.socket.removeAllListeners('client/connection/delete');
-        this.socket.removeAllListeners('client/connection/update');
+        this.socket.removeAllListeners('/connection/create');
+        this.socket.removeAllListeners('/connection/delete');
+        this.socket.removeAllListeners('/connection/update');
+        this.socket.removeAllListeners('/connections');
 
+    },
+    listAction:function(data){
+        var me = this;
+        var  id = data.activityId;
+        if(!id){
+            return this.socket.emit('/connections',{success:false,message:'Invalid Id'});
+        }
+        this.collection.find({activityId : id } ).toArray(function(err, records){
+            if(err) return me.socket.emit('/connections',{success:false,message:err.message});
+
+            return me.socket.emit('/connections',{success:true,connection:records});
+        });
     }
 });
 module.exports = Connection;
