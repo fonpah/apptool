@@ -17,7 +17,7 @@ Ext.define( 'App.Application', {
     init: function () {
         this.addEvents('loadstore');
         this.defaultRouter = new draw2d.layout.connection.SplineConnectionRouter();
-        this.fullPath = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
+        this.fullPath = location.protocol + '//' + location.hostname +':3000';// (location.port ? ':' + location.port : '');
         this.establishRealTimeCom();
         this.util = Ext.create( 'App.util.Util' );
         this.ajax = Ext.create( 'App.util.Ajax' );
@@ -36,7 +36,6 @@ Ext.define( 'App.Application', {
         this.socket = io.connect(this.fullPath);
         me.getArtifactsStore().getProxy().setSocket(me.socket);
         me.getConnectionsStore().getProxy().setSocket(me.socket);
-        //me.getContentsStore().getProxy().setSocket(me.socket);
         me.getCommentsStore().getProxy().setSocket(me.socket);
         this.socket.on('connected', function (data) {
             console.log(data);
@@ -46,8 +45,6 @@ Ext.define( 'App.Application', {
             me.getConnectionsStore().getProxy().bindEvents(me.socket);
             me.getCommentsStore().getProxy().removeEvents(me.socket);
             me.getCommentsStore().getProxy().bindEvents(me.socket);
-            /*me.getContentsStore().getProxy().removeEvents(me.socket);
-            me.getContentsStore().getProxy().bindEvents(me.socket);*/
 
         });
 
@@ -208,16 +205,6 @@ Ext.define( 'App.Application', {
                 me.user= user;
             }
         })
-    },
-    addCmdButtons: function ( btns ) {
-        this.commOpBarCmp.add( btns );
-    },
-    createNewTab: function ( config ) {
-        var tabItem = this.mainContentCmp.add( config );
-        tabItem.show();
-        this.mainContentCmp.setActiveTab( tabItem );
-        tabItem.fireEvent( 'tabactivate', tabItem );
-        return tabItem;
     }
 } );
 
