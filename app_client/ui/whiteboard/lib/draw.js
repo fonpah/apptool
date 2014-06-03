@@ -41,14 +41,16 @@ Ext.define('App.draw.Canvas',{
 
     },
     onSelectionChanged: function ( figure ) {
-        this.currentTarget= figure;
         if(figure instanceof draw2d.SetFigure){
-            app.getController('property').fireEvent('createpropertyform',figure, this);
+            this.currentTarget= figure;
         }
         else if(figure instanceof draw2d.Connection){
+            this.currentTarget= figure;
         }else{
-            app.getController('property').fireEvent('collapsepropertyform',this);
+            this.currentTarget=null;
         }
+        //app.getController('property').fireEvent('collapsepropertyform',this);
+        app.getController('property').fireEvent('createpropertyform',figure, this);
     },
     isDupConnection: function (sourceFigure, targetFigure) {
         var lines = this.lines;

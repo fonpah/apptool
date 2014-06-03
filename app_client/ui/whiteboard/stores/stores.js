@@ -171,7 +171,36 @@ Ext.define('App.store.Artifacts',{
 
 });
 
-Ext.define('App.store.Contents',{
+Ext.define('App.store.Permissions',{
+    extend:'App.store.AbstractSore',
+    model:'App.model.Permission',
+    storeId:'permissions',
+    constructor: function(cfg){
+        Ext.data.StoreManager.add(this.storeId,this);
+        this.callParent(arguments);
+    },
+    proxy:{
+        type:'ajax',
+        storeId: 'permissions',
+        api:{
+            create:'/permission/create',
+            read:'/permissions',
+            update:'/permission/update',
+            destroy:'/permission/delete'
+        },
+        reader:{
+            type:'json',
+            root:'permission'
+        },
+        writer:{
+            type:'json',
+            root:'permission',
+            writeAllFields: false
+        }
+    }
+});
+
+/*Ext.define('App.store.Contents',{
     extend:'App.store.AbstractSore',
     model:'App.model.Content',
     storeId:'contents',
@@ -207,4 +236,5 @@ Ext.define('App.store.Contents',{
             return  be4=== after;
         });
     }
-});
+});*/
+

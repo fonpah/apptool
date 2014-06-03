@@ -2,7 +2,7 @@
  * Created by fonpah on 05.04.2014.
  */
 Ext.define('App.util.Ajax', {
-    decodeJSON: App.util.Util.decodeJSON,
+    decodeJSON: App.util.decodeJSON,
     loadPropertyForm: function ( callback) {
         var me = this;
         Ext.Ajax.request({
@@ -34,12 +34,12 @@ Ext.define('App.util.Ajax', {
                     callback(result.activity);
                 }
                 else {
-                    App.current.util.showErrorMsg(result.message);
+                    App.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                App.current.util.showErrorMsg('Oh no! Something went wrong!');
+                App.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
@@ -77,12 +77,12 @@ Ext.define('App.util.Ajax', {
                 if (result.success) {
                 }
                 else {
-                    App.current.util.showErrorMsg(result.message);
+                    App.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                App.current.util.showErrorMsg('Oh no! Something went wrong!');
+                App.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
@@ -106,7 +106,7 @@ Ext.define('App.util.Ajax', {
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                App.current.util.showErrorMsg('Oh no! Something went wrong!');
+                App.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
@@ -124,12 +124,12 @@ Ext.define('App.util.Ajax', {
 
                 }
                 else {
-                    App.current.util.showErrorMsg(result.message);
+                    App.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                App.current.util.showErrorMsg('Oh no! Something went wrong!');
+                App.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     },
@@ -151,12 +151,12 @@ Ext.define('App.util.Ajax', {
 
                 }
                 else {
-                    App.current.util.showErrorMsg(result.message);
+                    App.util.showErrorMsg(result.message);
                 }
             },
             failure: function (conn, res, opts, eOpts) {
                 Ext.JSON.decode(conn.responseText, true);
-                App.current.util.showErrorMsg('Oh no! Something went wrong!');
+                App.util.showErrorMsg('Oh no! Something went wrong!');
             }
         });
     }

@@ -8910,6 +8910,7 @@ draw2d.policy.canvas.SelectionPolicy = draw2d.policy.canvas.CanvasPolicy.extend(
 
         canvas.selectionListeners.each(function(i,w){
             w.onSelectionChanged(null);
+
         });    
    }
 
@@ -8943,7 +8944,7 @@ draw2d.policy.canvas.SingleSelectionPolicy =  draw2d.policy.canvas.SelectionPoli
    
     select: function(canvas, figure){
         if(canvas.getSelection().getAll().contains(figure)){
-            return; // nothing to to
+            return ;
         }
         
         if(canvas.getSelection().getPrimary()!==null){
@@ -13216,7 +13217,20 @@ draw2d.Canvas = Class.extend(
             case 3: //Right mouse button pressed             
                 event.preventDefault();
                 event = this._getEvent(event);
+                // [Modification] added by disi 13-08-24T16:34
+                // [Reason] make selecting figure by right mousedown available
+                this.mouseDownX = event.clientX;
+                this.mouseDownY = event.clientY;
+                this.mouseDragDiffX = 0;
+                this.mouseDragDiffY = 0;
+                // [End of Modification] 13-08-24T16:34
                 pos = this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
+                // [Modification] added by disi 13-08-24T16:34
+                this.mouseDown = true;
+                this.editPolicy.each($.proxy(function (i, policy) {
+                    policy.onMouseDown(this, pos.x, pos.y);
+                }, this));
+                // [End of Modification] 13-08-24T16:34
                 this.onRightMouseDown(pos.x, pos.y, event.shiftKey, event.ctrlKey);
                 break;
             case 2:
@@ -13232,12 +13246,12 @@ draw2d.Canvas = Class.extend(
         //
         $(document).bind("dblclick",$.proxy(function(event)
         {
-            event = this._getEvent(event);
+           /* event = this._getEvent(event);
 
             this.mouseDownX = event.clientX;
             this.mouseDownY = event.clientY;
             var pos = this.fromDocumentToCanvasCoordinate(event.clientX, event.clientY);
-            this.onDoubleClick(pos.x, pos.y, event.shiftKey, event.ctrlKey);
+            this.onDoubleClick(pos.x, pos.y, event.shiftKey, event.ctrlKey);*/
         },this));
 
         

@@ -8,15 +8,18 @@ Ext.define( 'App.Application', {
     appFolder: '/ui/whiteboard',
     postfixNr: 0,
     appProperty: 'current',
-    models: ['User','Activity','Connection','Artifact','Content','Comment'],
-    stores: ['Artifacts', 'Connections', 'Comments'/*, 'Contents'*/],
-    controllers:['board','property','controls','content','comment'],
+    models: ['User','Activity','Connection','Artifact','Content','Comment','Role','Permission'],
+    stores: ['Artifacts', 'Connections', 'Comments'],
+    controllers:['board','property','controls','content','comment','lang'],
     currentCanvas: null,
-    activity:null,
-    user:null,
+    config:{
+        user:null,
+        activity:null,
+        role:null
+    },
     init: function () {
         this.addEvents('loadstore');
-        this.defaultRouter = new draw2d.layout.connection.SplineConnectionRouter();
+       // this.defaultRouter = new draw2d.layout.connection.SplineConnectionRouter();
         this.fullPath = location.protocol + '//' + location.hostname +':3000';// (location.port ? ':' + location.port : '');
         this.establishRealTimeCom();
         this.util = Ext.create( 'App.util.Util' );
@@ -26,10 +29,19 @@ Ext.define( 'App.Application', {
         this.initSouthPanelCmp();
         this.initEastPanelCmp();
         this.initPropertyForm();
-        this.propertyFormBuilder = Ext.create( 'App.builder.PropertyFormBuilder' );
-        this.contentFormBuilder = Ext.create( 'App.builder.ContentFormBuilder' );
+        //this.propertyFormBuilder = Ext.create( 'App.builder.PropertyFormBuilder' );
 
+        this.getArtifactsStore().addListener('update',this.onUpdatePersist,this);
+        this.getArtifactsStore().addListener('add',this.onCreatePersist,this);
+        this.getArtifactsStore().addListener('remove',this.onDestroyPersist,this);
 
+        this.getConnectionsStore().addListener('update',this.onUpdatePersist,this);
+        this.getConnectionsStore().addListener('add',this.onCreatePersist,this);
+        this.getConnectionsStore().addListener('destroy',this.onDestroyPersist,this);
+
+        this.getCommentsStore().addListener('update',this.onUpdatePersist,this);
+        this.getCommentsStore().addListener('add',this.onCreatePersist,this);
+        this.getCommentsStore().addListener('destroy',this.onDestroyPersist,this);
     },
     establishRealTimeCom: function () {
         var me = this;
@@ -65,7 +77,7 @@ Ext.define( 'App.Application', {
             margins: '0 0 0 5',
             activeTab: 0
         } );
-        this.mainContentCmp.loadMask = new Ext.LoadMask( this.mainContentCmp, {msg: "Loading, please wait..."} );
+        this.mainContentCmp.loadMask = new Ext.LoadMask( this.mainContentCmp, {msg: App.lang.t("Loading, please wait...")} );
     },
     initNorthPanelCmp: function () {
         this.initTopToolBarCmp();
@@ -114,23 +126,26 @@ Ext.define( 'App.Application', {
             margin: '0',
             autoEl: {
                 tag: 'div',
-                html: '<p style="font-size: 15px; font-weight: bold; color: rgb(21, 127, 204); margin: 0 5px 0 5px">Application Tool</p>'
+                html: '<p style="font-size: 15px; font-weight: bold; color: rgb(21, 127, 204); margin: 0 5px 0 5px">'+App.lang.t('Application Tool')+'</p>'
             }
         } );
     },
     initCommOpBarCmp: function () {
         this.commOpBarCmp = Ext.create( 'Ext.toolbar.Toolbar', {
-            id: 'authoring_panel_tbar_comm',
             style: 'padding: 0; margin: 0; border: none'
         } );
     },
     initTopToolBarCmp: function () {
         this.initTitleCmp();
-        this.topToolBarCmp = Ext.create( 'Ext.Toolbar', {
+        this.initCommOpBarCmp();
+        this.topToolBarCmp = Ext.create( 'Ext.toolbar.Toolbar', {
             style: 'padding-left: 0',
             items: [
                 this.titleCmp,
-                { xtype: 'tbspacer', width: 50 }
+                { xtype: 'tbspacer', width: 50 },
+                this.commOpBarCmp,
+                '->'
+
             ]
         } );
     },
@@ -139,8 +154,7 @@ Ext.define( 'App.Application', {
             id: 'app-status',
             style: 'padding-left: 0',
             border: false,
-
-            defaultText: '',
+            defaultText: 'Ready',
             defaultIconCls: 'x-status-valid',
             text: 'Ready',
             iconCls: 'x-status-valid'
@@ -164,7 +178,20 @@ Ext.define( 'App.Application', {
                 me.southPanelCmp
             ]
         } );
-        // this.openActivity(activity);
+    },
+    showUserInfo:function(user){
+       var cmp= Ext.create( 'Ext.Component', {
+            region: 'east',
+            margin: '0 5 0 0',
+            autoEl: {
+                tag: 'div',
+                html: '<p style="font-size: 15px; font-weight: bold; color: rgb(21, 127, 204); margin: 0 5px 0 5px">'+App.lang.t('Welcome ')+user.getFullName()+'</p>'
+            }
+        } );
+        this.topToolBarCmp.add(cmp);
+        this.topToolBarCmp.add({
+            xtype:'translation'
+        });
     },
     createConnection: function ( sourcePort, targetPort ) {
         var me = this;
@@ -173,7 +200,7 @@ Ext.define( 'App.Application', {
         }
         var conn = new App.node.Connection();
         conn.entityType = 'connection';
-        conn.activityId = me.activity.get('_id');
+        conn.activityId = me.getActivity().get('_id');
         var task = new Ext.util.DelayedTask(function(){
             me.getController('board' ).fireEvent('createconnection', conn, me.currentCanvas);
         });
@@ -184,27 +211,72 @@ Ext.define( 'App.Application', {
         var me = this;
         this.mainContentCmp.loadMask.show();
         this.getActivityModel().load(activityId,{
+            scope:this,
+            callback:function(record, operation,success){
+                this.mainContentCmp.loadMask.hide();
+                if(!operation.success){
+                    App.util.showErrorMsg(App.lang.t('Activity not found!'));
+                }
+                //console.log(App.util.decodeJSON(operation.response.responseText));
+            },
             success:function(activity){
-                me.activity= activity;
-                me.fireEvent('openwhiteboard', me.mainContentCmp, me.activity);
-                me.mainContentCmp.loadMask.hide();
+                this.setActivity(activity);
+                this.fireEvent('openwhiteboard', me.mainContentCmp, me.getActivity());
+                this.mainContentCmp.loadMask.hide();
             },
             failure:function(){
-                Ext.Error.raise('something went wrong with the server');
-            }/*,
-            params:{
-                _id:activityId
-            }*/
+                Ext.Error.raise(App.lang.t('something went wrong with the server'));
+
+            }
         });
 
     },
     loadUser:function(){
         var me = this;
         this.getUserModel().load(userId,{
+            scope:me,
             success: function(user){
-                me.user= user;
+                this.setUser(user);
+                this.showUserInfo(user);
+                if(user.get('roleId')){
+                    this.loadRole(user.get('roleId'));
+                }
+
             }
         })
+    },
+    loadRole:function(roleId){
+        this.getRoleModel().load(roleId,{
+            scope:this,
+            success:function( role,operation){
+                if(!operation.success){
+                    return;
+                }
+                var res = App.util.decodeJSON(operation.response.responseText);
+                this.setRole(role);
+                this.loadPermissions(role,res.role.permissions);
+            },
+            failure:function(record,operation){
+                Ext.Error.raise(App.lang.t('something went wrong with the server'));
+            }
+        });
+    },
+    loadPermissions:function(role,permissions){
+        var perms = permissions||[];
+        Ext.Array.each(perms,function(perm){
+            var model = Ext.create(this.getPermissionModel(),perm);
+            role.getPermissions().add(model.get('_id'),model);
+        },this);
+    },
+    onUpdatePersist:function(){
+        this.buttonStatusBarCmp.showBusy(App.lang.t('Updating Record!'));
+    },
+    onCreatePersist:function(){
+        this.buttonStatusBarCmp.showBusy(App.lang.t('Creating Record!'));
+        return true;
+    },
+    onDestroyPersist:function(){
+        this.buttonStatusBarCmp.showBusy(App.lang.t('Deleting Record!'));
     }
 } );
 

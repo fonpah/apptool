@@ -3,15 +3,50 @@
  */
 Ext.define('App.controller.controller',{
     extend:'Ext.app.Controller',
+    models: ['Artifact','Comment','Connection','Content','User','Activity'],
+    stores: ['Artifacts', 'Connections', 'Comments'],
+    refs:[
+        {
+            ref:'statusbar',
+            selector:'statusbar'
+        }
+    ],
+    init:function(){
+
+        this.callParent(arguments);
+
+    },
     isAuthorized:function(model){
-        var user= this.application.user;
-        return user.get('_id')==model.get('userId');
+        var user= this.application.getUser();
+        return user.get('_id') === model.get('userId');
+    },
+    isGranted:function(permission,model){
+        var user= this.application.getUser();
+        if(model){
+            if(user.get('_id') === model.get('userId')){
+                console.log('author');
+                return true;
+            }
+        }
+        var perm = this.getRole().getPermissions().findBy(function(item){
+                 return permission === item.get('name');
+        },this);
+        if(perm){
+            return true;
+        }else{
+            return false;
+        }
+    },
+    getRole:function(){
+        return this.application.getRole();
     }
+
 });
+
+
+
 Ext.define('App.controller.board',{
     extend:'App.controller.controller',
-    models: ['Artifact','Comment','Connection','Content','User','Activity'],
-    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
     views:['Contextmenu'],
     menu: null,
     init: function(){
@@ -20,7 +55,7 @@ Ext.define('App.controller.board',{
         this.on('drop',this.onDrop, this);
         this.on('createconnection',this.createConnection, this);
         this.on('contextmenu',this.onShowContextMenu,this);
-        //this.application.on('loadstore',this.onLoadStores, this);
+        this.on('figuremoved',this.onFigureMoved, this);
         this.control({
             'contextmenu > menuitem':{
                 click:this.onClickMenuitem,
@@ -33,6 +68,7 @@ Ext.define('App.controller.board',{
             }
         });
         this._addStoreListeners();
+        this.callParent(arguments);
     },
     getTabConfig: function () {
         var me = this;
@@ -48,7 +84,7 @@ Ext.define('App.controller.board',{
         tabItem.fireEvent( 'tabactivate', tabItem );
         this.application.currentCanvas = tabItem.canvas;
         if(!activity){
-            Ext.Error.raise('Activity could not be loaded');
+            Ext.Error.raise(App.lang.t('Activity could not be loaded'));
         }
         this.onLoadStores(activity);
         return tabItem;
@@ -65,22 +101,22 @@ Ext.define('App.controller.board',{
         if(figure instanceof draw2d.SetFigure){
             items=[
                 {
-                    text: 'Enter Content',
+                    text: App.lang.t('Enter Content'),
                     glyph:'xf067@fa',
                     itemId:'enter_content_item'
                 },
                 {
-                    text: 'View Comment',
+                    text: App.lang.t('View Comment'),
                     glyph:'xf075@fa',
                     itemId:'comment_item'
                 },
                 {
-                    text: 'View Content',
+                    text: App.lang.t('View Content'),
                     glyph:'xf06e@fa',
                     itemId:'view_content_item'
                 },
                 {
-                    text: 'Delete',
+                    text: App.lang.t('Delete'),
                     glyph:'xf014@fa',
                     itemId:'delete_node_item'
                 }
@@ -90,7 +126,7 @@ Ext.define('App.controller.board',{
         else if(figure instanceof draw2d.Connection){
             items =[
                 {
-                    text: 'Delete',
+                    text: App.lang.t('Delete'),
                     glyph:'xf014@fa',
                     itemId:'delete_line_item'
                 }
@@ -121,9 +157,6 @@ Ext.define('App.controller.board',{
             this.deleteConnection(canvas, figure);
         }
     },
-    onOpenContentWindow: function(canvas, figure){
-        console.log(arguments);
-    },
     onLoadStores: function(activity){
         var me = this;
         this.getArtifactsStore().load({
@@ -149,16 +182,17 @@ Ext.define('App.controller.board',{
     },
     addFigure: function(canvas,  type, title, isInAutoAddSection, x, y ){
         var figure = this.createFigure( canvas, type, title, isInAutoAddSection, x, y );
-        var activity = this.application.activity;
-        var user = this.application.user;
+        var activity = this.application.getActivity();
+        var user = this.application.getUser();
         var config = $.extend(true,{activityId:activity.get('_id'),userId:user.get('_id')},figure.getPersistentAttributes());
         var store = this.getArtifactsStore();
+        var me= this;
         if(!store.findRecord('id',figure.id,0,false,true,true)){
             var model = Ext.create(this.getArtifactModel(),config);
             store.add(model);
             store.sync({
                 callback:function(){
-                    console.log(arguments);
+                    me.getStatusbar().clearStatus({useDefaults:true});
                 },
                 success:function(){
                     console.log(arguments);
@@ -180,33 +214,58 @@ Ext.define('App.controller.board',{
         var store = this.getArtifactsStore();
         var connStore = this.getConnectionsStore();
         var model = store.findRecord('id',figure.id,0,false,true,true);
-        if(!this.isAuthorized(model)){
+        if(!this.isGranted('deleteArtifact',model)){
             return false;
         }
-        this.getController('property' ).fireEvent('deletepropertyform',model,canvas, figure);
+
         var me = this;
         var lines = connStore.queryByArtifactId(figure.id);
         this.bulkRemoveConnection(connStore,lines,canvas,function(){
             store.remove(model);
             store.sync({
                 callback:function(){
-                    console.log(arguments);
+                   this.getStatusbar().clearStatus({useDefaults:true});
                 },
                 success:function(){
-                    console.log(arguments);
-                },
-                failure:function(){
-                    console.log(arguments);
+                    this.getController('property' ).fireEvent('deletepropertyform',model,canvas, figure);
+                    canvas.removeFigure(figure);
                 },
                 scope:me
             });
-            canvas.removeFigure(figure);
+
         });
 
     },
+    onFigureMoved:function(figure){
+        var store = this.getArtifactsStore();
+        if(Ext.isEmpty(figure)){
+            return false;
+        }
+        var model = store.findRecord('id',figure.id);
+        if(!model){
+            return;
+        }
+        var changed= false;
+        if(model.get('x')!= figure.x && figure.x){
+            model.set('x',figure.x);
+            changed=true;
+        }
+        if(figure.y && model.get('y')!= figure.y){
+            model.set('y',figure.y);
+            changed=true;
+        }
+        if(changed){
+            store.sync({
+                callback:function(){
+                    this.getStatusbar().clearStatus({useDefaults:true});
+                },
+                scope:this
+            });
+        }
+    },
     onReadArtifacts:function(store,records,successfull,eOPts){
         var canvas = this.application.currentCanvas;
-        var activity = this.application.activity;
+        var activity = this.application.getActivity();
         if(!successfull){
             return;
         }
@@ -240,8 +299,8 @@ Ext.define('App.controller.board',{
     },
     /************************************CONNECTION EVENTS***********************************************************/
     createConnection: function(conn,canvas){
-        var activity = this.application.activity;
-        var user = this.application.user;
+        var activity = this.application.getActivity();
+        var user = this.application.getUser();
         var config = $.extend(true,{activityId:activity.get('_id'),userId:user.get('_id')},conn.getPersistentAttributes());
         var store = this.getConnectionsStore();
         if(store.findRecord('id', $.trim(conn.id),0,false,true,true) === null){
@@ -249,13 +308,7 @@ Ext.define('App.controller.board',{
             store.add(model);
             store.sync({
             callback:function(){
-              console.log(arguments);
-            },
-            success:function(){
-                console.log(arguments);
-            },
-            failure:function(){
-                console.log(arguments);
+                this.getStatusbar().clearStatus({useDefaults:true});
             },
             scope:this
             });
@@ -263,6 +316,7 @@ Ext.define('App.controller.board',{
     },
     deleteConnection: function(canvas, conn,model){
         var store = this.getConnectionsStore();
+        var me = this;
         if(typeof conn ==='undefined'){
             return false;
         }
@@ -275,7 +329,7 @@ Ext.define('App.controller.board',{
         store.remove(model);
         store.sync({
             callback:function(){
-
+                this.getStatusbar().clearStatus({useDefaults:true});
             },
             success:function(){
                 canvas.removeFigure(conn);
@@ -295,6 +349,7 @@ Ext.define('App.controller.board',{
             store.remove(arr);
             store.sync({
                 callback:function(){
+                    this.getStatusbar().clearStatus({useDefaults:true});
                    if(typeof callback=='function'){
                        callback();
                    }
@@ -391,8 +446,6 @@ Ext.define('App.controller.board',{
 
 Ext.define('App.controller.content',{
     extend:'App.controller.controller',
-    models: ['Artifact','Comment','Content'],
-    stores: ['Artifacts', 'Connections', 'Comments'/*, 'Contents'*/],
     init:function(){
         this.addEvents({
             'dblclick':true
@@ -424,6 +477,7 @@ Ext.define('App.controller.content',{
             }
         });
         this.on('dblclick',this.viewContent,this);
+        this.callParent(arguments);
     },
     viewContent: function(figure){
         var me= this;
@@ -437,7 +491,7 @@ Ext.define('App.controller.content',{
             return false;
         }
         me._getArtifactAndContent(figure,function(artifact,content){
-            if(!me.isAuthorized(artifact)){
+            if(!me.isGranted('updateContent',artifact)){
                 return false;
             }
             me._openContentEditor(artifact,content);
@@ -450,10 +504,10 @@ Ext.define('App.controller.content',{
         }
         var data = btn.up( 'form' ).down( 'htmleditor[name="data"]' );
         var win = btn.up( 'window' );
-        var mask = win.setLoading('saving ...');
+        var mask = win.setLoading(App.lang.t('saving ...'));
         var artifact = win.artifact;
         var content = win.contentModel;
-        var user = this.application.user;
+        var user = this.application.getUser();
 
         if ( Ext.isEmpty( content.get( '_id' ) ) ) {
             content.set( 'userId', user.get( '_id' ) );
@@ -464,7 +518,7 @@ Ext.define('App.controller.content',{
         content.save({
             callback : function(record, operation) {
                 if (operation.success) {
-                    util.showSuccessMsg('Content successfully saved!');
+                    App.util.showSuccessMsg('Content successfully saved!');
                 } else {
                     // failure
                 }
@@ -482,7 +536,7 @@ Ext.define('App.controller.content',{
         //console.log(cmp.up( 'window' ).contentModel.get('data'));
     },
     onBeforeShowContentEditor:function(cmp){
-        cmp.setTitle(App.current.util.shortenString(cmp.artifact.get('title'),11));
+        cmp.setTitle(App.util.shortenString(cmp.artifact.get('title'),11));
     },
     _getArtifactAndContent: function(figure,callback){
         var artifactStore = this.getArtifactsStore(),
@@ -510,7 +564,7 @@ Ext.define('App.controller.content',{
     _openContentWindow:function(artifact, content){
         var util = this.application.util;
         var win = Ext.createWidget('contentwindow',{
-            title: util.shortenString( artifact.get( 'title' ), 12 ),
+            title: App.util.shortenString( artifact.get( 'title' ), 12 ),
             html : content.get('data') || 'No content Available'
         });
         win.show();
@@ -518,7 +572,7 @@ Ext.define('App.controller.content',{
     _openContentEditor:function(artifact,content){
         var me = this;
         return Ext.widget('window', {
-            title: App.current.util.shortenString(artifact.get('title'),11),
+            title: App.util.shortenString(artifact.get('title'),11),
             closeAction: 'destroy',
             minWidth: 400,
             minHeight: 400,
@@ -576,8 +630,6 @@ Ext.define('App.controller.content',{
 
 Ext.define('App.controller.comment',{
     extend:'App.controller.controller',
-    models: ['Artifact','Comment','Content'],
-    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
     init:function(){
         this.control({
             'commentsview':{
@@ -591,27 +643,31 @@ Ext.define('App.controller.comment',{
             'commentswindow li.list-row':{
                 contextmenu:{
                     fn:function(){
-                        console.log('sdfsdf');
                         return false;
                     },
                     scope:this
                 }
             }
         });
+        this.callParent(arguments);
     },
     onAfterRenderView:function(cmp){
         var artifact= cmp.up('commentswindow').artifact;
         var store =cmp.getStore();
+        var me= this;
         store.load({
             params:{
                 artifactId:artifact.get('_id')
+            },
+            callback:function(){
+                //{useDefaults:true}me.getStatusbar().clearStatus({useDefaults:true});
             }
         });
     },
     viewComments: function(figure){
         var artifact = this.getArtifactsStore().findRecord('id',figure.id);
         return Ext.createWidget('commentswindow',{
-           title: App.current.util.shortenString(artifact.get('title'),11),
+           title: App.util.shortenString(artifact.get('title'),11),
            artifact: artifact,
            items:[
                {
@@ -626,7 +682,7 @@ Ext.define('App.controller.comment',{
     addComment: function ( cmp ) {
         var win = cmp.up( 'commentswindow' );
         var artifact = win.artifact;
-        var user = this.application.user;
+        var user = this.application.getUser();
         var dataview = win.down( 'commentsview' );
         var text = win.down( 'textareafield' );
         if ( !$.trim( text.getValue() ) ) {
@@ -641,9 +697,11 @@ Ext.define('App.controller.comment',{
 
         } );
         var store = dataview.getStore();
+        var me = this;
         store.add( model );
         store.sync( {
             callback: function () {
+                me.getStatusbar().clearStatus({useDefaults:true});
                 mask.hide();
             },
             success: function () {
@@ -661,12 +719,17 @@ Ext.define('App.controller.comment',{
 
 Ext.define('App.controller.property',{
     extend:'App.controller.controller',
-    models: ['Artifact','Comment'],
-    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
     init: function(){
         this.on('createpropertyform',this.createPropertyForm,this);
         this.on('deletepropertyform',this.onDeletePropertyForm,this);
         this.on('collapsepropertyform',this.onCollapsePropertyForm,this);
+        this.control({
+            'propertyform [action="change"]':{
+                change:this.onChange,
+                scope:this
+            }
+        });
+        this.callParent(arguments);
     },
     createPropertyForm: function(figure, canvas){
         if(!figure){
@@ -681,23 +744,23 @@ Ext.define('App.controller.property',{
         }
         var form = Ext.ComponentQuery.query('form[itemId="'+figure.id+'"]');
         if(form.length<1){
-            var propform = $.extend(true,{},this.application.propertyForm);
-             form = this.application.propertyFormBuilder.buildForm({
-                    fields: propform.fields,
-                    buttons: propform.buttons,
-                    itemId: model.get('id'),
-                    title: App.current.util.shortenString( model.get('title'), 11 ),
-                    figure: figure,
-                    controller: this
-                });
-            form.getForm().setValues(model.getData());
+            var property = $.extend(true,{},this.application.propertyForm);
+            form= Ext.createWidget('propertyform',{
+                items:property.fields,
+                itemId:model.get('id'),
+                title:App.util.shortenString( model.get('title'), 11 ),
+                controller:this,
+                artifact: model,
+                figure:figure
+            });
+
+            //form.getForm().setValues(model.getData());
         }else{
             form = form[0];
             form.getForm().setValues(model.getData());
         }
 
         this.updatePropertyFormPanel(form);
-
     },
     onDeletePropertyForm: function(model,canvas,figure){
         var id = figure.id;
@@ -707,47 +770,62 @@ Ext.define('App.controller.property',{
         }
     },
     onCollapsePropertyForm:function(canvas){
-        this.application.eastPanelCmp.collapse();
-    },
-    onChangeTitle: function ( cmp ) {
-        var me = this;
-        var store= this.getArtifactsStore();
-        var title = $.trim( cmp.getValue() );
-        if ( title.length !== 0 ) {
-            cmp.up( 'form' ).figure.updateTitle( title, true );
-            cmp.up( 'form' ).setTitle( App.current.util.shortenString( title, 11 ) );
-            var form = cmp.up('form' ).form;
-            var model = store.findRecord('id',cmp.up('form' ).figure.id,0,false,true,true);
-            model.set(cmp.getName(),cmp.getValue());
-            store.sync();
+        var items = this.application.eastPanelCmp.items;
+        if(items.keys.length<1){
+            this.application.eastPanelCmp.collapse();
         }
     },
-    onChangeDescription: function ( cmp ) {
-        var me = this;
+    onChange:function(cmp){
+        var form = cmp.up('form' ).form;
+        var model = cmp.up('form' ).artifact;
+        if(cmp.getValue().length<1){
+            return;
+        }
+        model.set(cmp.getName(),cmp.getValue());
+        if(cmp.getName()=='title'){
+           this.updateTitle(cmp,function(){
+               Ext.callback(this.syncArtifactStore,this);
+           },this);
+        }else if(cmp.getName()=='description'){
+            this.updateDescription(cmp,function(){
+                Ext.callback(this.syncArtifactStore,this);
+            },this);
+        }
+    },
+    syncArtifactStore:function(){
         var store= this.getArtifactsStore();
-        var description = $.trim( cmp.getValue() );
-        if ( description.length !== 0 ) {
-            cmp.up('form' ).figure.decsription = description;
-            var form = cmp.up('form' ).form;
-            var model = store.findRecord('id',cmp.up('form' ).figure.id,0,false,true,true);
-            model.set(cmp.getName(),cmp.getValue());
-            store.sync();
+        store.sync({
+            callback:function(){
+                this.getStatusbar().clearStatus({useDefaults:true});
+            },
+            scope:this
+        });
+    },
+    updateTitle: function ( cmp,callback, scope ) {
+        cmp.up( 'form' ).figure.updateTitle( cmp.getValue(), true );
+        cmp.up( 'form' ).setTitle( App.util.shortenString( cmp.getValue(), 11 ) );
+        if(typeof callback ==='function'){
+            Ext.callback(callback,scope||this);
+        }
 
+    },
+    updateDescription: function ( cmp,callback ,scope) {
+        cmp.up('form' ).figure.decsription = cmp.getValue();
+        if(typeof callback ==='function'){
+            Ext.callback(callback,scope||this);
         }
     },
     updatePropertyFormPanel: function ( form ) {
         var app = this.application;
         if ( !form ) {
+            app.eastPanelCmp.collapse();
             return;
         }
         if ( !Ext.get( form.getId() ) ) {
             app.eastPanelCmp.add( form );
         }
         app.eastPanelCmp.setActiveTab( form );
-        if(app.eastPanelCmp.getCollapsed()){
-            app.eastPanelCmp.expand();
-        }
-
+        app.eastPanelCmp.expand();
     }
 
 });
@@ -756,8 +834,6 @@ Ext.define('App.controller.property',{
 
 Ext.define('App.controller.controls',{
     extend:'App.controller.controller',
-    models: ['Artifact','Comment'],
-    stores: ['Artifacts', 'Connections', 'Comments', 'Contents'],
     views:['CommandToolbar'],
     refs:[
         {
@@ -782,8 +858,8 @@ Ext.define('App.controller.controls',{
         }
     ],
     init: function(){
-        this.application.topToolBarCmp.add({xtype:'commandtoolbar'});
-        this.on('stackchanged',Ext.bind(this.onStackChanged, this));
+        this.application.commOpBarCmp.add({xtype:'commandtoolbar'});
+        this.on('stackchanged',this.onStackChanged, this);
         this.control({
             'commandtoolbar button[action="zoom-out"]':{
                 click:{
@@ -816,6 +892,7 @@ Ext.define('App.controller.controls',{
                 }
             }
         });
+        this.callParent(arguments);
     },
     onStackChanged:function(canvas, event){
         var canUndo = event.getStack().canUndo();
@@ -860,3 +937,47 @@ Ext.define('App.controller.controls',{
     }
 });
 
+Ext.define('App.controller.lang', {
+    extend: 'App.controller.controller',
+    refs: [
+        {
+            ref: 'langSelector',
+            selector: 'translation'
+        }
+    ],
+
+    onMenuitemClick: function(item, e, options) {
+        var menu = this.getLangSelector();
+
+        menu.setIconCls(item.iconCls);
+        menu.setText(item.text);
+
+        localStorage.setItem("user-lang", item.iconCls);
+
+        window.location.reload();
+    },
+
+    onSplitbuttonBeforeRender: function(abstractcomponent, options) {
+        var lang = localStorage ? (localStorage.getItem('user-lang') || 'en') : 'en';
+        abstractcomponent.iconCls = lang;
+
+        if (lang == 'en'){
+            abstractcomponent.text = App.lang.t('English');
+        } else {
+            abstractcomponent.text = App.lang.t('German');
+        }
+    },
+
+    init: function(application) {
+        this.control({
+            "translation menuitem": {
+                click: this.onMenuitemClick
+            },
+            "translation": {
+                beforerender: this.onSplitbuttonBeforeRender
+            }
+        });
+        this.callParent(arguments);
+    }
+
+});

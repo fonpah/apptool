@@ -149,7 +149,7 @@ Ext.define('App.view.Comment',{
     extend:'Ext.view.View',
     alias:'widget.commentsview',
     autoEl:'ul',
-    emptyText: 'No images available',
+    emptyText: App.lang.t('No images available'),
     tpl:[
         '<tpl for=".">',
         '<li class="list-row">{text}</li>',
@@ -204,3 +204,51 @@ Ext.define('App.window.Comment',{
     glyph:'xf086@fa'
 });
 
+Ext.define('App.view.Lang', {
+    extend: 'Ext.button.Split',
+    alias: 'widget.translation',
+    requires:[
+        'App.lang'
+    ],
+    text: App.lang.t('switchLang'),
+    menu: Ext.create('Ext.menu.Menu', {
+        items: [
+            {
+                xtype: 'menuitem',
+                iconCls: 'en',
+                text: App.lang.t('english')
+            },
+            {
+                xtype: 'menuitem',
+                iconCls: 'de',
+                text: App.lang.t('german')
+            }
+        ]
+    })
+});
+
+Ext.define('App.view.PropertyForm',{
+    alias:'widget.propertyform',
+    extend:'Ext.form.Panel',
+    margin: '5',
+    initComponent: function(){
+        if(!this.items) this.items=[];
+
+        Ext.Array.each(this.items,function(field,index){
+               if(field.required){
+                   this.items[index].afterLabelTextTpl = App.util.required;
+                   this.items[index].allowBlank = false;
+                   delete this.items[index].required;
+               }
+               if(!field.value){
+                   this.items[index].value = this.artifact.get(field.name);
+               }
+               if(!this.controller.isGranted('updateArtifact',this.artifact)){
+                   this.items[index].disabled= true;
+               }
+            this.items[index].action='change';
+            delete this.items[index].listeners;
+        },this);
+        this.callParent();
+    }
+});

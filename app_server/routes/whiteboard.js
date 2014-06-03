@@ -10,6 +10,7 @@ var ConnCtrl =  require('../modules/whiteboard/controller/connection');
 var UserCtrl =  require('../modules/whiteboard/controller/user');
 var CommentCtrl =  require('../modules/whiteboard/controller/comment');
 var ContentCtrl = require('../modules/whiteboard/controller/content');
+var RoleCtrl = require('../modules/whiteboard/controller/role');
 
 module.exports= function(app){
     var indexCtrl = new IndexCtrl(db,appSocket);
@@ -19,10 +20,11 @@ module.exports= function(app){
     var userCtrl = new UserCtrl(db, appSocket);
     var commentCtrl = new CommentCtrl(db, appSocket);
     var contentCtrl = new ContentCtrl(db,appSocket);
+    var roleCtrl  = new RoleCtrl(db, appSocket);
     app.get('/',function(req, res, next){
         indexCtrl.indexAction(req, res, next);
     });
-    app.get('/whiteboard/:id',function(req, res, next){
+    app.get('/:id',function(req, res, next){
         indexCtrl.readAction(req, res, next);
     });
 
@@ -87,6 +89,11 @@ module.exports= function(app){
     });
     app.post('/content/delete',function(req, res, next){
         contentCtrl.deleteAction(req, res, next);
+    });
+
+
+    app.get('/role/read',function(req, res, next){
+        roleCtrl.readAction(req, res, next);
     });
     return app;
 }

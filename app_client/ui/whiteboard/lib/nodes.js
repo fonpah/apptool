@@ -208,10 +208,17 @@ Ext.define( 'App.node.AbstractFigure', {
         }
 
         return this;
-    },
-    moved:function(){
-        console.log(arguments);
-    }
+    }/*,
+    onDragEnd:function(x,y,shiftKey, ctrlKey){
+       this.callParent(arguments);
+       if(this.x != x){
+           this.x = x;
+       }
+       if(this.y != y){
+           this.y = y;
+       }
+       app.getController('board' ).fireEvent('figuremoved',this);
+    }*/
 } );
 
 
