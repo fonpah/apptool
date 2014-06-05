@@ -209,6 +209,7 @@ Ext.define( 'App.model.Role', {
         {name: '_id', type: 'string'},
         {name: 'name', type: 'string'},
         {name: 'description', type: 'string'},
+        {name: 'bizRule', type: 'string'},
         {name: 'permissionIds', type: 'auto'}
     ],
     proxy: {
